@@ -6,6 +6,8 @@
 
 Una herramienta inteligente y moderna para la gestión financiera personal con análisis avanzado de ingresos, gastos y recomendaciones automáticas.
 
+🚀 **Aplicación en vivo**: [https://Frodo24-atr.github.io/asesor-financiero-personal](https://Frodo24-atr.github.io/asesor-financiero-personal)
+
 ![Asesor Financiero Personal Demo](https://via.placeholder.com/800x400/2563eb/ffffff?text=Asesor+Financiero+Personal)
 
 ## 🌟 Características Principales
