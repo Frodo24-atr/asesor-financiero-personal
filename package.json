@@ -1,0 +1,53 @@
+{
+  "name": "asesor-financiero-personal",
+  "version": "1.0.0",
+  "description": "Asesor Financiero Personal - Herramienta inteligente para gestión financiera con análisis de ingresos, gastos y recomendaciones automáticas",
+  "type": "module",
+  "main": "src/index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,js --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "finanzas",
+    "asesor-financiero",
+    "presupuesto",
+    "ingresos",
+    "gastos",
+    "ratios-endeudamiento",
+    "salud-financiera",
+    "recomendaciones",
+    "dashboard",
+    "pdf",
+    "typescript",
+    "vite"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "sass": "^1.69.5"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "jspdf": "^2.5.1",
+    "@emailjs/browser": "^3.11.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuusuario/asesor-financiero-personal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tuusuario/asesor-financiero-personal/issues"
+  },
+  "homepage": "https://github.com/tuusuario/asesor-financiero-personal#readme"
+}
