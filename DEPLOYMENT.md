@@ -72,7 +72,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   // ... otras configuraciones
-})
+});
 ```
 
 ### Variables de Entorno
@@ -95,48 +95,50 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run tests
-      run: npm run lint
-      
-    - name: Build
-      run: npm run build
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
 ```
 
 ## Configuración de Dominio Personalizado
 
 ### En GitHub Pages:
+
 1. Agregar archivo `CNAME` en `/public/` con tu dominio
 2. Configurar DNS A records apuntando a GitHub Pages IPs
 3. Habilitar HTTPS en configuración del repositorio
 
 ### En Vercel/Netlify:
+
 1. Agregar dominio en dashboard
 2. Configurar DNS según las instrucciones
 3. SSL se configura automáticamente
@@ -144,44 +146,49 @@ jobs:
 ## Optimizaciones para Producción
 
 ### 1. Lazy Loading
+
 ```typescript
 // Para futuras rutas
-const Dashboard = lazy(() => import('./components/Dashboard'))
+const Dashboard = lazy(() => import('./components/Dashboard'));
 ```
 
 ### 2. Code Splitting
+
 ```typescript
 // Vite hace esto automáticamente
-import('./modules/charts').then(module => {
+import('./modules/charts').then((module) => {
   // Cargar charts solo cuando sea necesario
-})
+});
 ```
 
 ### 3. Compresión
+
 ```typescript
 // vite.config.ts
-import { compression } from 'vite-plugin-compression'
+import { compression } from 'vite-plugin-compression';
 
 export default defineConfig({
-  plugins: [compression()]
-})
+  plugins: [compression()],
+});
 ```
 
 ## Monitoreo y Analytics
 
 ### Google Analytics
+
 ```html
 <!-- En index.html -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
 ```
 
 ### Sentry para errores
+
 ```typescript
-import * as Sentry from "@sentry/browser"
+import * as Sentry from '@sentry/browser';
 
 Sentry.init({
-  dsn: "YOUR_DSN"
-})
+  dsn: 'YOUR_DSN',
+});
 ```
 
 ## Checklist Pre-Deploy

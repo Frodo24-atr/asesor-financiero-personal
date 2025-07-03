@@ -13,6 +13,7 @@ Una herramienta inteligente y moderna para la gestión financiera personal con a
 ## 🌟 Características Principales
 
 ### ✅ Implementadas
+
 - 📊 **Dashboard Financiero Interactivo**: Visualización clara de tu situación financiera
 - 💼 **Configuración de Ingresos**: Soporte para ingresos quincenales y mensuales
 - � **Gestión de Gastos**: 11 categorías predefinidas con filtros avanzados
@@ -24,6 +25,7 @@ Una herramienta inteligente y moderna para la gestión financiera personal con a
 - 🔔 **Sistema de Notificaciones**: Alertas visuales para acciones importantes
 
 ### 🚧 En Desarrollo
+
 - 📈 **Gráficos Interactivos**: Visualizaciones con Chart.js
 - 🎯 **Metas Financieras**: Planificación y seguimiento de objetivos
 - 📧 **Notificaciones Email**: Envío automático de reportes
@@ -36,28 +38,33 @@ Una herramienta inteligente y moderna para la gestión financiera personal con a
 ## 📦 Instalación
 
 ### Prerrequisitos
-- Node.js 16+ 
+
+- Node.js 16+
 - npm o yarn
 
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
+
 ```bash
 git clone https://github.com/tu-usuario/asesor-financiero-personal.git
 cd asesor-financiero-personal
 ```
 
 2. **Instalar dependencias**
+
 ```bash
 npm install
 ```
 
 3. **Iniciar el servidor de desarrollo**
+
 ```bash
 npm run dev
 ```
 
 4. **Abrir en el navegador**
+
 ```
 http://localhost:3000
 ```
@@ -75,6 +82,7 @@ npm run format    # Formatea el código con Prettier
 ## 🎯 Uso
 
 ### 1. Configurar Ingresos
+
 - Ve a la pestaña "💰 Ingresos"
 - Selecciona la frecuencia (mensual o quincenal)
 - Ingresa el monto de tus ingresos
@@ -82,6 +90,7 @@ npm run format    # Formatea el código con Prettier
 - Haz clic en "💾 Guardar Configuración"
 
 ### 2. Registrar Gastos
+
 - Ve a la pestaña "💸 Gastos"
 - Llena el formulario con los detalles del gasto
 - Selecciona la categoría y frecuencia
@@ -89,12 +98,14 @@ npm run format    # Formatea el código con Prettier
 - Haz clic en "➕ Agregar Gasto"
 
 ### 3. Ver Análisis
+
 - El dashboard se actualiza automáticamente
 - Revisa tu puntuación de salud financiera
 - Lee las recomendaciones personalizadas
 - Filtra gastos por categoría o prioridad
 
 ### 4. Exportar Reporte
+
 - Haz clic en "📄 Exportar Reporte"
 - Se generará un PDF con tu análisis completo
 - Incluye resumen financiero y recomendaciones
@@ -159,23 +170,27 @@ npm run format
 ## 📊 Características Técnicas
 
 ### Gestión de Estado
+
 - Persistencia automática en localStorage
 - Manejo de errores y validación de datos
 - Carga y migración de datos
 
 ### Interfaz de Usuario
+
 - Diseño responsive mobile-first
 - Tema oscuro/claro
 - Animaciones suaves con CSS
 - Sistema de notificaciones
 
 ### Análisis Financiero
+
 - Cálculo de ratios de endeudamiento
 - Sistema de puntuación (0-100)
 - Recomendaciones personalizadas
 - Categorización automática de gastos
 
 ### Generación de Reportes
+
 - PDFs profesionales y limpios
 - Sin caracteres especiales para compatibilidad
 - Resumen financiero completo
@@ -184,16 +199,19 @@ npm run format
 ## 🔮 Roadmap
 
 ### Versión 1.1
+
 - [ ] Gráficos interactivos con Chart.js
 - [ ] Sistema de metas financieras
 - [ ] Exportación de datos a CSV/Excel
 
 ### Versión 1.2
+
 - [ ] Notificaciones por email
 - [ ] Análisis predictivo
 - [ ] Comparación de períodos
 
 ### Versión 2.0
+
 - [ ] Integración con bancos
 - [ ] App móvil (PWA)
 - [ ] Recomendaciones con IA
@@ -201,6 +219,7 @@ npm run format
 ## 📝 Changelog
 
 ### v1.0.0 (2025-07-02)
+
 - ✅ Lanzamiento inicial
 - ✅ Dashboard financiero completo
 - ✅ Gestión de ingresos y gastos
@@ -227,9 +246,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 ---
 
-**⭐ ¡Dale una estrella si este proyecto te ha sido útil!**
-5. **Exportar Reportes**: Genera reportes PDF profesionales
-6. **Configurar Alertas**: Recibe notificaciones por email sobre tu salud financiera
+**⭐ ¡Dale una estrella si este proyecto te ha sido útil!** 5. **Exportar Reportes**: Genera reportes PDF profesionales 6. **Configurar Alertas**: Recibe notificaciones por email sobre tu salud financiera
 
 ## 🔗 Proyecto Relacionado
 

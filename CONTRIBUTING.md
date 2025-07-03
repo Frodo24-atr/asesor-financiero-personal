@@ -5,6 +5,7 @@
 ## 🚀 Cómo Empezar
 
 ### Prerrequisitos
+
 - Node.js 18+
 - npm o yarn
 - Git
@@ -12,22 +13,26 @@
 ### Configuración del Entorno
 
 1. **Fork el repositorio**
+
    ```bash
    # Haz fork desde GitHub UI
    ```
 
 2. **Clonar tu fork**
+
    ```bash
    git clone https://github.com/tu-usuario/asesor-financiero-personal.git
    cd asesor-financiero-personal
    ```
 
 3. **Instalar dependencias**
+
    ```bash
    npm install
    ```
 
 4. **Configurar remote upstream**
+
    ```bash
    git remote add upstream https://github.com/usuario-original/asesor-financiero-personal.git
    ```
@@ -40,16 +45,19 @@
 ## 📝 Flujo de Trabajo
 
 ### 1. Crear una nueva rama
+
 ```bash
 git checkout -b feature/nombre-de-la-feature
 ```
 
 ### 2. Hacer cambios
+
 - Escribe código limpio y bien documentado
 - Sigue las convenciones de estilo existentes
 - Agrega tests si es aplicable
 
 ### 3. Verificar código
+
 ```bash
 npm run lint     # Verificar ESLint
 npm run format   # Formatear con Prettier
@@ -57,12 +65,14 @@ npm run build    # Verificar que compile
 ```
 
 ### 4. Commit
+
 ```bash
 git add .
 git commit -m "feat: descripción clara del cambio"
 ```
 
 ### 5. Push y Pull Request
+
 ```bash
 git push origin feature/nombre-de-la-feature
 ```
@@ -72,23 +82,27 @@ Luego crea un Pull Request desde GitHub.
 ## 📋 Tipos de Contribuciones
 
 ### 🐛 Reportar Bugs
+
 - Usa el template de issue para bugs
 - Incluye pasos para reproducir
 - Especifica el navegador y OS
 - Agrega screenshots si es útil
 
 ### ✨ Nuevas Features
+
 - Abre un issue primero para discutir la idea
 - Espera feedback antes de empezar a codear
 - Sigue el roadmap del proyecto
 
 ### 📚 Documentación
+
 - Mejoras en README
 - Documentación de código
 - Guías de usuario
 - Ejemplos de uso
 
 ### 🎨 Mejoras de UI/UX
+
 - Propuestas de diseño
 - Mejoras de accesibilidad
 - Optimizaciones de performance
@@ -96,6 +110,7 @@ Luego crea un Pull Request desde GitHub.
 ## 🎯 Estándares de Código
 
 ### TypeScript
+
 - Usar tipos explícitos siempre que sea posible
 - Evitar `any` - usar tipos específicos
 - Documentar funciones complejas con JSDoc
@@ -113,6 +128,7 @@ function calculateDebtRatio(income: number, expenses: number): number {
 ```
 
 ### SCSS
+
 - Usar variables CSS para colores y espaciado
 - Seguir metodología BEM para nombres de clases
 - Mantener especificidad baja
@@ -122,11 +138,11 @@ function calculateDebtRatio(income: number, expenses: number): number {
   &__header {
     // estilos del header
   }
-  
+
   &__content {
     // estilos del contenido
   }
-  
+
   &--highlighted {
     // modificador para destacar
   }
@@ -134,6 +150,7 @@ function calculateDebtRatio(income: number, expenses: number): number {
 ```
 
 ### Estructura de Archivos
+
 ```
 src/
 ├── components/          # Componentes reutilizables (futuro)
@@ -151,11 +168,13 @@ src/
 ## 🧪 Testing
 
 ### Para nuevas features:
+
 - Agregar tests unitarios si es aplicable
 - Verificar que no rompan funcionalidad existente
 - Probar en diferentes navegadores
 
 ### Manual Testing Checklist:
+
 - [ ] Funciona en Chrome, Firefox, Safari
 - [ ] Responsive en mobile y desktop
 - [ ] Tema oscuro y claro funcionan
@@ -177,6 +196,7 @@ chore: cambios en build, deps, etc.
 ```
 
 Ejemplos:
+
 ```
 feat: agregar gráfico de gastos por categoría
 fix: corregir cálculo de ratio de endeudamiento
@@ -187,12 +207,14 @@ style: mejorar espaciado en formularios
 ## 🔍 Proceso de Review
 
 ### Para Maintainers:
+
 1. Verificar que cumple con estándares
 2. Probar funcionalidad manualmente
 3. Revisar impacto en performance
 4. Verificar documentación actualizada
 
 ### Para Contributors:
+
 - Responder a feedback constructivamente
 - Hacer cambios solicitados
 - Mantener commits limpios (squash si es necesario)
@@ -210,6 +232,7 @@ style: mejorar espaciado en formularios
 ## 🎁 Reconocimientos
 
 Los contributors aparecerán en:
+
 - README principal
 - Página de créditos en la app
 - Releases notes

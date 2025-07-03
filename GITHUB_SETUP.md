@@ -13,7 +13,6 @@
    - **NO marcar**: Add a README file
    - **NO marcar**: Add .gitignore
    - **NO marcar**: Choose a license
-   
 4. **Haz clic en "Create repository"**
 
 ### 2. Conectar Repositorio Local
@@ -114,17 +113,20 @@ asesor-financiero-personal/
 ## 📞 Solución de Problemas
 
 ### Error: "remote origin already exists"
+
 ```bash
 git remote remove origin
 git remote add origin https://github.com/TU-USUARIO/asesor-financiero-personal.git
 ```
 
 ### Error en GitHub Actions
+
 - Verifica que GitHub Pages esté habilitado
 - Revisa los logs en la pestaña "Actions"
 - Asegúrate que la configuración de base URL sea correcta
 
 ### Build falla
+
 ```bash
 # Probar build localmente
 npm run build

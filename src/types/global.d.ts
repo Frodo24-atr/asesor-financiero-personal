@@ -2,12 +2,11 @@
 declare global {
   interface Window {
     financialAdvisor: FinancialAdvisor;
-    jsPDF: any;
+    jsPDF: {
+      new (): any;
+    };
     emailjs: any;
   }
-  
-  const jsPDF: any;
-  const emailjs: any;
 }
 
 export {};

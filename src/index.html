@@ -1,456 +1,854 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>💰 Asesor Financiero Personal</title>
-    <meta name="description" content="Herramienta inteligente para gestión financiera personal con análisis de ingresos y recomendaciones automáticas">
-    
+    <meta
+      name="description"
+      content="Herramienta inteligente para gestión financiera personal con análisis de ingresos y recomendaciones automáticas"
+    />
+
     <!-- Estilos -->
-    <link rel="stylesheet" href="./styles/main.scss">
-    
+    <link rel="stylesheet" href="./styles/main.scss" />
+
     <!-- Scripts externos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-</head>
-<body>
+
+    <!-- jsPDF con múltiples fallbacks y verificación -->
+    <script>
+      console.log('Iniciando carga de jsPDF...');
+
+      // Función para verificar si jsPDF está disponible
+      function checkJsPDF() {
+        return window.jsPDF && typeof window.jsPDF === 'function';
+      }
+
+      // Función para cargar un script
+      function loadScript(src, onSuccess, onError) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = function () {
+          console.log('Script cargado exitosamente:', src);
+          if (onSuccess) onSuccess();
+        };
+        script.onerror = function () {
+          console.warn('Error cargando script:', src);
+          if (onError) onError();
+        };
+        document.head.appendChild(script);
+      }
+
+      // Intentar cargar desde diferentes CDNs
+      function loadJsPDFWithFallbacks() {
+        console.log('Intentando cargar jsPDF desde cdnjs...');
+
+        loadScript(
+          'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+          function () {
+            if (checkJsPDF()) {
+              console.log('✅ jsPDF cargado desde cdnjs');
+            } else {
+              console.log(
+                '❌ jsPDF no disponible después de cargar desde cdnjs, intentando unpkg...'
+              );
+              tryUnpkg();
+            }
+          },
+          function () {
+            console.log('❌ Error con cdnjs, intentando unpkg...');
+            tryUnpkg();
+          }
+        );
+      }
+
+      function tryUnpkg() {
+        loadScript(
+          'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
+          function () {
+            if (checkJsPDF()) {
+              console.log('✅ jsPDF cargado desde unpkg');
+            } else {
+              console.log(
+                '❌ jsPDF no disponible después de cargar desde unpkg, intentando jsdelivr...'
+              );
+              tryJsdelivr();
+            }
+          },
+          function () {
+            console.log('❌ Error con unpkg, intentando jsdelivr...');
+            tryJsdelivr();
+          }
+        );
+      }
+
+      function tryJsdelivr() {
+        loadScript(
+          'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',
+          function () {
+            if (checkJsPDF()) {
+              console.log('✅ jsPDF cargado desde jsdelivr');
+            } else {
+              console.log('❌ Todos los CDNs fallaron');
+            }
+          },
+          function () {
+            console.log('❌ Todos los CDNs fallaron');
+          }
+        );
+      }
+
+      // Iniciar la carga
+      loadJsPDFWithFallbacks();
+
+      // Verificar después de 3 segundos
+      setTimeout(function () {
+        if (checkJsPDF()) {
+          console.log('✅ Verificación final: jsPDF está disponible');
+          console.log('jsPDF version:', window.jsPDF.version || 'unknown');
+        } else {
+          console.log('❌ Verificación final: jsPDF NO está disponible');
+        }
+      }, 3000);
+    </script>
+
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+  </head>
+  <body>
     <!-- Header -->
     <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>💰 Asesor Financiero Personal</h1>
-                    <p>Tu compañero inteligente para la gestión financiera</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-outline" id="toggle-theme">
-                        <span class="theme-icon">🌙</span>
-                    </button>
-                    <button class="btn btn-primary" id="export-report">
-                        📄 Exportar Reporte
-                    </button>
-                </div>
-            </div>
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <h1>💰 Asesor Financiero Personal</h1>
+            <p>Tu compañero inteligente para la gestión financiera</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-outline" id="load-sample-data">
+              📊 Datos de Ejemplo
+            </button>
+            <button class="btn btn-outline" id="toggle-theme">
+              <span class="theme-icon">🌙</span>
+            </button>
+            <button class="btn btn-primary" id="export-report">
+              📄 Exportar Reporte
+            </button>
+          </div>
         </div>
+      </div>
     </header>
 
     <!-- Navigation -->
     <nav class="navigation">
-        <div class="container">
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
-                <button class="nav-tab" data-tab="income">💰 Ingresos</button>
-                <button class="nav-tab" data-tab="expenses">💸 Gastos</button>
-                <button class="nav-tab" data-tab="analysis">📈 Análisis</button>
-                <button class="nav-tab" data-tab="goals">🎯 Metas</button>
-            </div>
+      <div class="container">
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-tab="dashboard">
+            📊 Dashboard
+          </button>
+          <button class="nav-tab" data-tab="income">💰 Ingresos</button>
+          <button class="nav-tab" data-tab="expenses">💸 Gastos</button>
+          <button class="nav-tab" data-tab="analysis">📈 Análisis</button>
+          <button class="nav-tab" data-tab="goals">🎯 Metas</button>
         </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main">
-        <div class="container">
-            
-            <!-- Dashboard Tab -->
-            <section id="dashboard-tab" class="tab-content active">
-                <div class="dashboard-header">
-                    <h2>Dashboard Financiero</h2>
-                    <div class="financial-health-indicator" id="health-indicator">
-                        <div class="health-status">
-                            <span class="health-icon">🟢</span>
-                            <span class="health-text">Estado: No evaluado</span>
-                        </div>
-                        <div class="health-score">
-                            <span class="score-label">Puntuación:</span>
-                            <span class="score-value" id="health-score">--</span>
-                        </div>
-                    </div>
+      <div class="container">
+        <!-- Dashboard Tab -->
+        <section id="dashboard-tab" class="tab-content active">
+          <div class="dashboard-header">
+            <h2>Dashboard Financiero</h2>
+            <div class="financial-health-indicator" id="health-indicator">
+              <div class="health-status">
+                <span class="health-icon">🟢</span>
+                <span class="health-text">Estado: No evaluado</span>
+              </div>
+              <div class="health-score">
+                <span class="score-label">Puntuación:</span>
+                <span class="score-value" id="health-score">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Resumen -->
+          <div class="summary-cards">
+            <div class="card income-card">
+              <div class="card-header">
+                <h3>💰 Ingresos Mensuales</h3>
+              </div>
+              <div class="card-content">
+                <div class="amount" id="total-income">$0</div>
+                <div class="subtitle" id="income-subtitle">No configurado</div>
+              </div>
+            </div>
+
+            <div class="card expense-card">
+              <div class="card-header">
+                <h3>💸 Gastos Mensuales</h3>
+              </div>
+              <div class="card-content">
+                <div class="amount" id="total-expenses">$0</div>
+                <div class="subtitle" id="expenses-subtitle">
+                  0 gastos registrados
+                </div>
+              </div>
+            </div>
+
+            <div class="card balance-card">
+              <div class="card-header">
+                <h3>💵 Ingreso Disponible</h3>
+              </div>
+              <div class="card-content">
+                <div class="amount" id="disposable-income">$0</div>
+                <div class="subtitle" id="balance-subtitle">No evaluado</div>
+              </div>
+            </div>
+
+            <div class="card ratio-card">
+              <div class="card-header">
+                <h3>📊 Ratio de Endeudamiento</h3>
+              </div>
+              <div class="card-content">
+                <div class="amount" id="debt-ratio">0%</div>
+                <div class="subtitle" id="ratio-subtitle">Excelente</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráficos -->
+          <div class="charts-section">
+            <div class="chart-container">
+              <h3>📈 Distribución de Gastos</h3>
+              <canvas id="expenses-chart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>📊 Tendencia Mensual</h3>
+              <canvas id="trend-chart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Income Tab -->
+        <section id="income-tab" class="tab-content">
+          <div class="section-header">
+            <h2>💰 Configuración de Ingresos</h2>
+            <p>
+              Define tus fuentes de ingresos para un análisis financiero preciso
+            </p>
+          </div>
+
+          <!-- Configuración Principal de Ingresos -->
+          <div class="income-config-card">
+            <div class="card-header">
+              <h3>Ingreso Principal</h3>
+            </div>
+            <div class="card-content">
+              <form id="income-form" class="income-form">
+                <!-- Tipo de Frecuencia -->
+                <div class="form-group">
+                  <label class="form-label">Frecuencia de Pago</label>
+                  <div class="frequency-selector">
+                    <label class="frequency-option">
+                      <input
+                        type="radio"
+                        name="income-frequency"
+                        value="monthly"
+                        checked
+                      />
+                      <span class="frequency-label">📅 Mensual</span>
+                    </label>
+                    <label class="frequency-option">
+                      <input
+                        type="radio"
+                        name="income-frequency"
+                        value="biweekly"
+                      />
+                      <span class="frequency-label">📋 Quincenal</span>
+                    </label>
+                  </div>
                 </div>
 
-                <!-- Cards de Resumen -->
-                <div class="summary-cards">
-                    <div class="card income-card">
-                        <div class="card-header">
-                            <h3>💰 Ingresos Mensuales</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="amount" id="total-income">$0</div>
-                            <div class="subtitle" id="income-subtitle">No configurado</div>
-                        </div>
-                    </div>
-
-                    <div class="card expense-card">
-                        <div class="card-header">
-                            <h3>💸 Gastos Mensuales</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="amount" id="total-expenses">$0</div>
-                            <div class="subtitle" id="expenses-subtitle">0 gastos registrados</div>
-                        </div>
-                    </div>
-
-                    <div class="card balance-card">
-                        <div class="card-header">
-                            <h3>💵 Ingreso Disponible</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="amount" id="disposable-income">$0</div>
-                            <div class="subtitle" id="balance-subtitle">No evaluado</div>
-                        </div>
-                    </div>
-
-                    <div class="card ratio-card">
-                        <div class="card-header">
-                            <h3>📊 Ratio de Endeudamiento</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="amount" id="debt-ratio">0%</div>
-                            <div class="subtitle" id="ratio-subtitle">Excelente</div>
-                        </div>
-                    </div>
+                <!-- Monto -->
+                <div class="form-group">
+                  <label for="income-amount" class="form-label">
+                    Monto <span id="income-frequency-label">(Mensual)</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-prefix">$</span>
+                    <input
+                      type="number"
+                      id="income-amount"
+                      name="income-amount"
+                      class="form-input"
+                      placeholder="2,500,000"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
                 </div>
 
-                <!-- Gráficos -->
-                <div class="charts-section">
-                    <div class="chart-container">
-                        <h3>📈 Distribución de Gastos</h3>
-                        <canvas id="expenses-chart"></canvas>
+                <!-- Ingresos Adicionales -->
+                <div class="form-group">
+                  <label for="additional-income" class="form-label">
+                    Ingresos Adicionales (Opcional)
+                  </label>
+                  <div class="input-group">
+                    <span class="input-prefix">$</span>
+                    <input
+                      type="number"
+                      id="additional-income"
+                      name="additional-income"
+                      class="form-input"
+                      placeholder="500,000"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
+                  <small class="form-help"
+                    >Freelance, inversiones, bonos, etc.</small
+                  >
+                </div>
+
+                <!-- Bonificaciones -->
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      id="include-bonuses"
+                      name="include-bonuses"
+                    />
+                    <span class="checkmark"></span>
+                    Incluir bonificaciones estacionales
+                  </label>
+                  <small class="form-help"
+                    >Prima, cesantías, bonos de productividad</small
+                  >
+                </div>
+
+                <!-- Botones -->
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    💾 Guardar Configuración
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="preview-income"
+                  >
+                    👁️ Vista Previa
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Resumen de Ingresos Configurados -->
+          <div class="income-summary" id="income-summary" style="display: none">
+            <div class="card">
+              <div class="card-header">
+                <h3>📋 Resumen de Ingresos</h3>
+              </div>
+              <div class="card-content">
+                <div class="income-breakdown" id="income-breakdown">
+                  <!-- Se llenará dinámicamente -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Expenses Tab -->
+        <section id="expenses-tab" class="tab-content">
+          <div class="section-header">
+            <h2>💸 Gestión de Gastos</h2>
+            <p>Registra y categoriza tus gastos para un control detallado</p>
+          </div>
+
+          <!-- Formulario de Gastos -->
+          <div class="expense-form-card">
+            <div class="card-header">
+              <h3>Agregar Nuevo Gasto</h3>
+            </div>
+            <div class="card-content">
+              <form id="expense-form" class="expense-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expense-name" class="form-label"
+                      >Nombre del Gasto</label
+                    >
+                    <input
+                      type="text"
+                      id="expense-name"
+                      name="expense-name"
+                      class="form-input"
+                      placeholder="Ejemplo: Arriendo, Supermercado, Gasolina"
+                      required
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="expense-category" class="form-label"
+                      >Categoría</label
+                    >
+                    <select
+                      id="expense-category"
+                      name="expense-category"
+                      class="form-select"
+                      required
+                    >
+                      <option value="">Seleccionar categoría</option>
+                      <option value="housing">🏠 Vivienda</option>
+                      <option value="food">🍕 Alimentación</option>
+                      <option value="transport">🚗 Transporte</option>
+                      <option value="health">🏥 Salud</option>
+                      <option value="education">📚 Educación</option>
+                      <option value="entertainment">🎬 Entretenimiento</option>
+                      <option value="shopping">🛍️ Compras</option>
+                      <option value="services">⚡ Servicios</option>
+                      <option value="savings">💰 Ahorros</option>
+                      <option value="debt">💳 Deudas</option>
+                      <option value="other">📦 Otros</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="expense-amount" class="form-label">Monto</label>
+                    <div class="input-group">
+                      <span class="input-prefix">$</span>
+                      <input
+                        type="number"
+                        id="expense-amount"
+                        name="expense-amount"
+                        class="form-input"
+                        placeholder="150,000"
+                        min="0"
+                        step="1000"
+                        required
+                      />
                     </div>
-                    <div class="chart-container">
-                        <h3>📊 Tendencia Mensual</h3>
-                        <canvas id="trend-chart"></canvas>
-                    </div>
-                </div>
-            </section>
+                  </div>
 
-            <!-- Income Tab -->
-            <section id="income-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>💰 Configuración de Ingresos</h2>
-                    <p>Define tus fuentes de ingresos para un análisis financiero preciso</p>
-                </div>
-
-                <!-- Configuración Principal de Ingresos -->
-                <div class="income-config-card">
-                    <div class="card-header">
-                        <h3>Ingreso Principal</h3>
-                    </div>
-                    <div class="card-content">
-                        <form id="income-form" class="income-form">
-                            <!-- Tipo de Frecuencia -->
-                            <div class="form-group">
-                                <label class="form-label">Frecuencia de Pago</label>
-                                <div class="frequency-selector">
-                                    <label class="frequency-option">
-                                        <input type="radio" name="income-frequency" value="monthly" checked>
-                                        <span class="frequency-label">📅 Mensual</span>
-                                    </label>
-                                    <label class="frequency-option">
-                                        <input type="radio" name="income-frequency" value="biweekly">
-                                        <span class="frequency-label">📋 Quincenal</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Monto -->
-                            <div class="form-group">
-                                <label for="income-amount" class="form-label">
-                                    Monto <span id="income-frequency-label">(Mensual)</span>
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-prefix">$</span>
-                                    <input 
-                                        type="number" 
-                                        id="income-amount" 
-                                        name="income-amount"
-                                        class="form-input"
-                                        placeholder="2,500,000"
-                                        min="0"
-                                        step="1000"
-                                    >
-                                </div>
-                            </div>
-
-                            <!-- Ingresos Adicionales -->
-                            <div class="form-group">
-                                <label for="additional-income" class="form-label">
-                                    Ingresos Adicionales (Opcional)
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-prefix">$</span>
-                                    <input 
-                                        type="number" 
-                                        id="additional-income" 
-                                        name="additional-income"
-                                        class="form-input"
-                                        placeholder="500,000"
-                                        min="0"
-                                        step="1000"
-                                    >
-                                </div>
-                                <small class="form-help">Freelance, inversiones, bonos, etc.</small>
-                            </div>
-
-                            <!-- Bonificaciones -->
-                            <div class="form-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="include-bonuses" name="include-bonuses">
-                                    <span class="checkmark"></span>
-                                    Incluir bonificaciones estacionales
-                                </label>
-                                <small class="form-help">Prima, cesantías, bonos de productividad</small>
-                            </div>
-
-                            <!-- Botones -->
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">
-                                    💾 Guardar Configuración
-                                </button>
-                                <button type="button" class="btn btn-outline" id="preview-income">
-                                    👁️ Vista Previa
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                  <div class="form-group">
+                    <label for="expense-frequency" class="form-label"
+                      >Frecuencia</label
+                    >
+                    <select
+                      id="expense-frequency"
+                      name="expense-frequency"
+                      class="form-select"
+                      required
+                    >
+                      <option value="monthly">📅 Mensual</option>
+                      <option value="biweekly">📋 Quincenal</option>
+                      <option value="weekly">📄 Semanal</option>
+                      <option value="daily">📝 Diario</option>
+                      <option value="yearly">📊 Anual</option>
+                      <option value="one-time">🎯 Una vez</option>
+                    </select>
+                  </div>
                 </div>
 
-                <!-- Resumen de Ingresos Configurados -->
-                <div class="income-summary" id="income-summary" style="display: none;">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>📋 Resumen de Ingresos</h3>
-                        </div>
-                        <div class="card-content">
-                            <div class="income-breakdown" id="income-breakdown">
-                                <!-- Se llenará dinámicamente -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Expenses Tab -->
-            <section id="expenses-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>💸 Gestión de Gastos</h2>
-                    <p>Registra y categoriza tus gastos para un control detallado</p>
-                </div>
-
-                <!-- Formulario de Gastos -->
-                <div class="expense-form-card">
-                    <div class="card-header">
-                        <h3>Agregar Nuevo Gasto</h3>
-                    </div>
-                    <div class="card-content">
-                        <form id="expense-form" class="expense-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="expense-name" class="form-label">Nombre del Gasto</label>
-                                    <input 
-                                        type="text" 
-                                        id="expense-name" 
-                                        name="expense-name"
-                                        class="form-input"
-                                        placeholder="Ejemplo: Arriendo, Supermercado, Gasolina"
-                                        required
-                                    >
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="expense-category" class="form-label">Categoría</label>
-                                    <select id="expense-category" name="expense-category" class="form-select" required>
-                                        <option value="">Seleccionar categoría</option>
-                                        <option value="housing">🏠 Vivienda</option>
-                                        <option value="food">🍕 Alimentación</option>
-                                        <option value="transport">🚗 Transporte</option>
-                                        <option value="health">🏥 Salud</option>
-                                        <option value="education">📚 Educación</option>
-                                        <option value="entertainment">🎬 Entretenimiento</option>
-                                        <option value="shopping">🛍️ Compras</option>
-                                        <option value="services">⚡ Servicios</option>
-                                        <option value="savings">💰 Ahorros</option>
-                                        <option value="debt">💳 Deudas</option>
-                                        <option value="other">📦 Otros</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="expense-amount" class="form-label">Monto</label>
-                                    <div class="input-group">
-                                        <span class="input-prefix">$</span>
-                                        <input 
-                                            type="number" 
-                                            id="expense-amount" 
-                                            name="expense-amount"
-                                            class="form-input"
-                                            placeholder="150,000"
-                                            min="0"
-                                            step="1000"
-                                            required
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="expense-frequency" class="form-label">Frecuencia</label>
-                                    <select id="expense-frequency" name="expense-frequency" class="form-select" required>
-                                        <option value="monthly">📅 Mensual</option>
-                                        <option value="biweekly">📋 Quincenal</option>
-                                        <option value="weekly">📄 Semanal</option>
-                                        <option value="daily">📝 Diario</option>
-                                        <option value="yearly">📊 Anual</option>
-                                        <option value="one-time">🎯 Una vez</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="expense-priority" class="form-label">Prioridad</label>
-                                <div class="priority-selector">
-                                    <label class="priority-option essential">
-                                        <input type="radio" name="expense-priority" value="essential" checked>
-                                        <span class="priority-label">🔴 Esencial</span>
-                                    </label>
-                                    <label class="priority-option important">
-                                        <input type="radio" name="expense-priority" value="important">
-                                        <span class="priority-label">🟡 Importante</span>
-                                    </label>
-                                    <label class="priority-option optional">
-                                        <input type="radio" name="expense-priority" value="optional">
-                                        <span class="priority-label">🟢 Opcional</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">
-                                    ➕ Agregar Gasto
-                                </button>
-                                <button type="reset" class="btn btn-outline">
-                                    🔄 Limpiar
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                <div class="form-group">
+                  <label for="expense-priority" class="form-label"
+                    >Prioridad</label
+                  >
+                  <div class="priority-selector">
+                    <label class="priority-option essential">
+                      <input
+                        type="radio"
+                        name="expense-priority"
+                        value="essential"
+                        checked
+                      />
+                      <span class="priority-label">🔴 Esencial</span>
+                    </label>
+                    <label class="priority-option important">
+                      <input
+                        type="radio"
+                        name="expense-priority"
+                        value="important"
+                      />
+                      <span class="priority-label">🟡 Importante</span>
+                    </label>
+                    <label class="priority-option optional">
+                      <input
+                        type="radio"
+                        name="expense-priority"
+                        value="optional"
+                      />
+                      <span class="priority-label">🟢 Opcional</span>
+                    </label>
+                  </div>
                 </div>
 
-                <!-- Lista de Gastos -->
-                <div class="expenses-list" id="expenses-list">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>📋 Lista de Gastos</h3>
-                            <div class="list-filters">
-                                <select id="category-filter" class="form-select-sm">
-                                    <option value="">Todas las categorías</option>
-                                </select>
-                                <select id="priority-filter" class="form-select-sm">
-                                    <option value="">Todas las prioridades</option>
-                                    <option value="essential">🔴 Esenciales</option>
-                                    <option value="important">🟡 Importantes</option>
-                                    <option value="optional">🟢 Opcionales</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="card-content">
-                            <div class="expenses-container" id="expenses-container">
-                                <div class="empty-state">
-                                    <div class="empty-icon">📊</div>
-                                    <h3>No hay gastos registrados</h3>
-                                    <p>Comienza agregando tus gastos para obtener un análisis detallado</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    ➕ Agregar Gasto
+                  </button>
+                  <button type="reset" class="btn btn-outline">
+                    🔄 Limpiar
+                  </button>
                 </div>
-            </section>
+              </form>
+            </div>
+          </div>
 
-            <!-- Analysis Tab -->
-            <section id="analysis-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>📈 Análisis Financiero</h2>
-                    <p>Análisis detallado de tu situación financiera con recomendaciones personalizadas</p>
+          <!-- Lista de Gastos -->
+          <div class="expenses-list" id="expenses-list">
+            <div class="card">
+              <div class="card-header">
+                <h3>📋 Lista de Gastos</h3>
+                <div class="list-filters">
+                  <select id="category-filter" class="form-select-sm">
+                    <option value="">Todas las categorías</option>
+                  </select>
+                  <select id="priority-filter" class="form-select-sm">
+                    <option value="">Todas las prioridades</option>
+                    <option value="essential">🔴 Esenciales</option>
+                    <option value="important">🟡 Importantes</option>
+                    <option value="optional">🟢 Opcionales</option>
+                  </select>
+                </div>
+              </div>
+              <div class="card-content">
+                <div class="expenses-container" id="expenses-container">
+                  <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3>No hay gastos registrados</h3>
+                    <p>
+                      Comienza agregando tus gastos para obtener un análisis
+                      detallado
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Analysis Tab -->
+        <section id="analysis-tab" class="tab-content">
+          <div class="section-header">
+            <h2>📈 Análisis Financiero</h2>
+            <p>
+              Análisis detallado de tu situación financiera con métricas y
+              tendencias
+            </p>
+          </div>
+
+          <!-- Financial Ratios -->
+          <div class="analysis-section">
+            <h3>📊 Ratios Financieros Clave</h3>
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-icon">💰</div>
+                <div class="metric-info">
+                  <h4>Tasa de Ahorro</h4>
+                  <div class="metric-value" id="savings-rate">--</div>
+                  <div class="metric-status" id="savings-status">Sin datos</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">📈</div>
+                <div class="metric-info">
+                  <h4>Ratio Deuda/Ingresos</h4>
+                  <div class="metric-value" id="debt-income-ratio">--</div>
+                  <div class="metric-status" id="debt-status">Sin datos</div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">🛡️</div>
+                <div class="metric-info">
+                  <h4>Fondo de Emergencia</h4>
+                  <div class="metric-value" id="emergency-fund">--</div>
+                  <div class="metric-status" id="emergency-status">
+                    Sin datos
+                  </div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-icon">�</div>
+                <div class="metric-info">
+                  <h4>Tendencia de Gastos</h4>
+                  <div class="metric-value" id="expense-trend">--</div>
+                  <div class="metric-status" id="trend-status">Sin datos</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top Categories -->
+          <div class="analysis-section">
+            <h3>🏆 Principales Categorías de Gastos</h3>
+            <div class="card">
+              <div class="card-content">
+                <div id="top-categories-chart">
+                  <div class="no-data-message">
+                    <span class="icon">📊</span>
+                    <p>
+                      Configure sus gastos para ver el análisis de categorías
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projection -->
+          <div class="analysis-section">
+            <div class="section-title-controls">
+              <h3>🔮 Proyección Financiera</h3>
+              <div class="projection-controls">
+                <label for="projection-range">Período:</label>
+                <select id="projection-range" class="projection-select">
+                  <option value="6">6 Meses</option>
+                  <option value="12">1 Año</option>
+                  <option value="24">2 Años</option>
+                </select>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-content">
+                <div id="projection-chart">
+                  <div class="no-data-message">
+                    <span class="icon">📈</span>
+                    <p>
+                      Configure sus ingresos y gastos para ver las proyecciones
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="analysis-section">
+            <h3>💡 Recomendaciones Inteligentes</h3>
+            <div
+              class="recommendations-container"
+              id="analysis-recommendations"
+            >
+              <div class="no-data-message">
+                <span class="icon">🤔</span>
+                <p>
+                  Las recomendaciones aparecerán cuando haya datos financieros
+                  disponibles
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Goals Tab -->
+        <section id="goals-tab" class="tab-content">
+          <div class="section-header">
+            <h2>🎯 Metas Financieras</h2>
+            <p>Define y rastrea tus objetivos financieros</p>
+          </div>
+
+          <!-- Add Goal Form -->
+          <div class="card">
+            <div class="card-header">
+              <h3>➕ Nueva Meta Financiera</h3>
+            </div>
+            <div class="card-content">
+              <form id="goal-form" class="form-grid">
+                <div class="form-group">
+                  <label for="goal-name">Nombre de la Meta</label>
+                  <input
+                    type="text"
+                    id="goal-name"
+                    placeholder="ej: Vacaciones en Europa"
+                    required
+                  />
                 </div>
 
-                <div class="analysis-placeholder">
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <div class="placeholder-icon">🚧</div>
-                            <h3>Análisis Avanzado</h3>
-                            <p>Esta sección se desarrollará en las próximas fases del proyecto</p>
-                            <p>Incluirá ratios financieros, proyecciones y recomendaciones inteligentes</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Goals Tab -->
-            <section id="goals-tab" class="tab-content">
-                <div class="section-header">
-                    <h2>🎯 Metas Financieras</h2>
-                    <p>Define y rastrea tus objetivos financieros</p>
+                <div class="form-group">
+                  <label for="goal-amount">Monto Objetivo</label>
+                  <input
+                    type="number"
+                    id="goal-amount"
+                    min="0"
+                    step="0.01"
+                    placeholder="5000"
+                    required
+                  />
                 </div>
 
-                <div class="goals-placeholder">
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <div class="placeholder-icon">🎯</div>
-                            <h3>Metas y Objetivos</h3>
-                            <p>Sistema de metas financieras en desarrollo</p>
-                            <p>Podrás establecer metas de ahorro, eliminar deudas y planificar inversiones</p>
-                        </div>
-                    </div>
+                <div class="form-group">
+                  <label for="goal-current">Monto Actual</label>
+                  <input
+                    type="number"
+                    id="goal-current"
+                    min="0"
+                    step="0.01"
+                    placeholder="1200"
+                    value="0"
+                  />
                 </div>
-            </section>
 
-        </div>
+                <div class="form-group">
+                  <label for="goal-date">Fecha Objetivo</label>
+                  <input type="date" id="goal-date" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="goal-category">Categoría</label>
+                  <select id="goal-category" required>
+                    <option value="">Seleccionar categoría</option>
+                    <option value="ahorro">💰 Ahorro General</option>
+                    <option value="deuda">💳 Eliminar Deuda</option>
+                    <option value="inversion">📈 Inversión</option>
+                    <option value="compra">🛍️ Compra Importante</option>
+                    <option value="emergencia">🛡️ Fondo de Emergencia</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="goal-priority">Prioridad</label>
+                  <select id="goal-priority" required>
+                    <option value="">Seleccionar prioridad</option>
+                    <option value="alta">🔴 Alta</option>
+                    <option value="media">🟡 Media</option>
+                    <option value="baja">🟢 Baja</option>
+                  </select>
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="goal-description">Descripción (opcional)</label>
+                  <textarea
+                    id="goal-description"
+                    rows="3"
+                    placeholder="Describe tu meta y cómo planeas alcanzarla..."
+                  ></textarea>
+                </div>
+
+                <div class="form-actions full-width">
+                  <button type="submit" class="btn btn-primary">
+                    🎯 Crear Meta
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Goals List -->
+          <div class="goals-section">
+            <h3>📋 Mis Metas Financieras</h3>
+            <div id="goals-container">
+              <div class="no-data-message">
+                <span class="icon">🎯</span>
+                <p>Aún no has creado ninguna meta financiera</p>
+                <p>Usa el formulario de arriba para crear tu primera meta</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Goals Summary -->
+          <div class="goals-summary" id="goals-summary" style="display: none">
+            <h3>📊 Resumen de Metas</h3>
+            <div class="summary-grid">
+              <div class="summary-card">
+                <div class="summary-icon">🎯</div>
+                <div class="summary-info">
+                  <h4>Total de Metas</h4>
+                  <div class="summary-value" id="total-goals">0</div>
+                </div>
+              </div>
+
+              <div class="summary-card">
+                <div class="summary-icon">✅</div>
+                <div class="summary-info">
+                  <h4>Metas Completadas</h4>
+                  <div class="summary-value" id="completed-goals">0</div>
+                </div>
+              </div>
+
+              <div class="summary-card">
+                <div class="summary-icon">💰</div>
+                <div class="summary-info">
+                  <h4>Total Objetivo</h4>
+                  <div class="summary-value" id="total-target">$0</div>
+                </div>
+              </div>
+
+              <div class="summary-card">
+                <div class="summary-icon">📈</div>
+                <div class="summary-info">
+                  <h4>Progreso Total</h4>
+                  <div class="summary-value" id="total-progress">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <p>&copy; 2025 Asesor Financiero Personal. Evolución de Calculadora de Cuotas.</p>
-                    <p>Herramienta de código abierto para gestión financiera inteligente</p>
-                </div>
-                <div class="footer-links">
-                    <a href="https://github.com/tuusuario/calculadora-cuotas" target="_blank">
-                        📊 Calculadora Original
-                    </a>
-                    <a href="https://github.com/tuusuario/asesor-financiero-personal" target="_blank">
-                        🏦 Proyecto Actual
-                    </a>
-                </div>
-            </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-info">
+            <p>
+              &copy; 2025 Asesor Financiero Personal. Evolución de Calculadora
+              de Cuotas.
+            </p>
+            <p>
+              Herramienta de código abierto para gestión financiera inteligente
+            </p>
+          </div>
+          <div class="footer-links">
+            <a
+              href="https://github.com/tuusuario/calculadora-cuotas"
+              target="_blank"
+            >
+              📊 Calculadora Original
+            </a>
+            <a
+              href="https://github.com/tuusuario/asesor-financiero-personal"
+              target="_blank"
+            >
+              🏦 Proyecto Actual
+            </a>
+          </div>
         </div>
+      </div>
     </footer>
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loading-overlay">
-        <div class="loading-spinner"></div>
-        <p>Procesando información financiera...</p>
+      <div class="loading-spinner"></div>
+      <p>Procesando información financiera...</p>
     </div>
 
     <!-- Modal Container -->
     <div class="modal-overlay" id="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">Título</h3>
-                <button class="modal-close" id="modal-close">&times;</button>
-            </div>
-            <div class="modal-content" id="modal-content">
-                <!-- Contenido dinámico -->
-            </div>
-            <div class="modal-actions" id="modal-actions">
-                <!-- Botones dinámicos -->
-            </div>
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modal-title">Título</h3>
+          <button class="modal-close" id="modal-close">&times;</button>
         </div>
+        <div class="modal-content" id="modal-content">
+          <!-- Contenido dinámico -->
+        </div>
+        <div class="modal-actions" id="modal-actions">
+          <!-- Botones dinámicos -->
+        </div>
+      </div>
     </div>
 
     <!-- Scripts -->
     <script type="module" src="./scripts/app.ts"></script>
-</body>
+  </body>
 </html>

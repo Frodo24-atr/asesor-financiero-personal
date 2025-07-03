@@ -5,6 +5,7 @@ Este documento contiene las funciones principales de la calculadora que pueden s
 ## Gestión de Productos y Cuotas
 
 ### addProduct()
+
 ```javascript
 addProduct() {
   // Función para agregar productos con cálculo de cuotas
@@ -13,6 +14,7 @@ addProduct() {
 ```
 
 ### deleteProduct(index)
+
 ```javascript
 deleteProduct(index) {
   // Elimina un producto con confirmación modal
@@ -21,6 +23,7 @@ deleteProduct(index) {
 ```
 
 ### calculateInstallments(price, installments, interestRate)
+
 ```javascript
 calculateInstallments(price, installments, interestRate) {
   // Cálculo matemático de cuotas con interés
@@ -31,6 +34,7 @@ calculateInstallments(price, installments, interestRate) {
 ## Gestión de Estadísticas
 
 ### updateStats()
+
 ```javascript
 updateStats() {
   // Calcula estadísticas generales:
@@ -42,6 +46,7 @@ updateStats() {
 ```
 
 ### updateChart()
+
 ```javascript
 updateChart() {
   // Actualiza gráficos con Chart.js
@@ -53,6 +58,7 @@ updateChart() {
 ## Generación de PDF
 
 ### generatePDF()
+
 ```javascript
 generatePDF() {
   // Genera reportes PDF con jsPDF
@@ -62,6 +68,7 @@ generatePDF() {
 ```
 
 ### addPDFHeader(doc)
+
 ```javascript
 addPDFHeader(doc) {
   // Agrega encabezado profesional al PDF
@@ -70,6 +77,7 @@ addPDFHeader(doc) {
 ```
 
 ### addPDFFooter(doc, pageNumber, totalPages)
+
 ```javascript
 addPDFFooter(doc, pageNumber, totalPages) {
   // Pie de página con numeración
@@ -80,6 +88,7 @@ addPDFFooter(doc, pageNumber, totalPages) {
 ## Gestión de Datos
 
 ### saveToLocalStorage()
+
 ```javascript
 saveToLocalStorage() {
   // Persistencia de datos en localStorage
@@ -88,6 +97,7 @@ saveToLocalStorage() {
 ```
 
 ### loadFromLocalStorage()
+
 ```javascript
 loadFromLocalStorage() {
   // Carga de datos guardados
@@ -98,6 +108,7 @@ loadFromLocalStorage() {
 ## Utilidades de UI
 
 ### showModal(content, type)
+
 ```javascript
 showModal(content, type) {
   // Sistema de modales reutilizable
@@ -106,6 +117,7 @@ showModal(content, type) {
 ```
 
 ### showLoading() / hideLoading()
+
 ```javascript
 showLoading() {
   // Indicadores de carga con spinner animado
@@ -118,6 +130,7 @@ hideLoading() {
 ## Validaciones
 
 ### validatePositiveNumber(value)
+
 ```javascript
 validatePositiveNumber(value) {
   // Validación de números positivos
@@ -126,6 +139,7 @@ validatePositiveNumber(value) {
 ```
 
 ### formatCurrency(amount)
+
 ```javascript
 formatCurrency(amount) {
   // Formateo de moneda para mostrar
