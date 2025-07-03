@@ -1818,7 +1818,7 @@ body {
     .table-header .header-cell,
     .table-row .table-cell {
       padding: 0.75rem 0.5rem;
-      font-size: 0.75rem;
+      font-size: 0.875rem; // Aumentado de 0.75rem a 0.875rem
       text-align: center;
 
       &:first-child {
@@ -1828,7 +1828,7 @@ body {
     }
 
     .table-header .header-cell {
-      font-size: 0.7rem;
+      font-size: 0.8rem; // Aumentado de 0.7rem a 0.8rem
       padding: 0.875rem 0.5rem;
     }
   }
@@ -1845,7 +1845,7 @@ body {
       border: 1px solid var(--border-color);
       border-radius: var(--radius);
       margin-bottom: 1rem;
-      padding: 1rem;
+      padding: 1.25rem; // Aumentado de 1rem a 1.25rem para más espacio
       min-width: auto;
 
       &:hover {
@@ -1856,10 +1856,11 @@ body {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0.5rem 0;
+        padding: 0.625rem 0; // Aumentado de 0.5rem a 0.625rem
         border-right: none;
         border-bottom: 1px solid var(--border-light);
         text-align: left;
+        font-size: 0.95rem; // Agregado tamaño de fuente más grande
 
         &:last-child {
           border-bottom: none;
@@ -1867,7 +1868,7 @@ body {
 
         &:first-child {
           background: transparent;
-          font-size: 1rem;
+          font-size: 1.125rem; // Aumentado de 1rem a 1.125rem
           font-weight: 700;
           color: var(--primary-color);
           border-bottom: 2px solid var(--border-color);
@@ -1877,10 +1878,30 @@ body {
         }
 
         // Agregar etiquetas para cada celda en móvil
-        &:nth-child(2)::before { content: "Ingresos: "; font-weight: 600; color: var(--text-secondary); }
-        &:nth-child(3)::before { content: "Gastos: "; font-weight: 600; color: var(--text-secondary); }
-        &:nth-child(4)::before { content: "Balance: "; font-weight: 600; color: var(--text-secondary); }
-        &:nth-child(5)::before { content: "Acumulado: "; font-weight: 600; color: var(--text-secondary); }
+        &:nth-child(2)::before {
+          content: 'Ingresos: ';
+          font-weight: 600;
+          color: var(--text-secondary);
+          font-size: 0.9rem; // Agregado tamaño de fuente para etiquetas
+        }
+        &:nth-child(3)::before {
+          content: 'Gastos: ';
+          font-weight: 600;
+          color: var(--text-secondary);
+          font-size: 0.9rem; // Agregado tamaño de fuente para etiquetas
+        }
+        &:nth-child(4)::before {
+          content: 'Balance: ';
+          font-weight: 600;
+          color: var(--text-secondary);
+          font-size: 0.9rem; // Agregado tamaño de fuente para etiquetas
+        }
+        &:nth-child(5)::before {
+          content: 'Acumulado: ';
+          font-weight: 600;
+          color: var(--text-secondary);
+          font-size: 0.9rem; // Agregado tamaño de fuente para etiquetas
+        }
       }
     }
   }
