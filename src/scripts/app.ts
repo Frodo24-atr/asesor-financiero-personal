@@ -85,6 +85,7 @@ class FinancialAdvisor {
     this.setupGoalsForm();
     this.updateUI();
     this.initializeEmailJS();
+    this.setupNumberFormatting();
   }
 
   private setupEventListeners(): void {
@@ -255,8 +256,10 @@ class FinancialAdvisor {
     const formData = new FormData(form);
 
     const frequency = formData.get('income-frequency') as string;
-    const amount = parseFloat((formData.get('income-amount') as string) || '0');
-    const additionalIncome = parseFloat(
+    const amount = this.parseArgentineNumber(
+      (formData.get('income-amount') as string) || '0'
+    );
+    const additionalIncome = this.parseArgentineNumber(
       (formData.get('additional-income') as string) || '0'
     );
 
@@ -285,7 +288,7 @@ class FinancialAdvisor {
 
     const name = formData.get('expense-name') as string;
     const category = formData.get('expense-category') as string;
-    const amount = parseFloat(
+    const amount = this.parseArgentineNumber(
       (formData.get('expense-amount') as string) || '0'
     );
     const frequency = formData.get('expense-frequency') as string;
@@ -349,8 +352,8 @@ class FinancialAdvisor {
       return;
     }
 
-    const targetAmount = parseFloat(amountInput.value);
-    const currentAmount = parseFloat(currentInput.value) || 0;
+    const targetAmount = this.parseArgentineNumber(amountInput.value);
+    const currentAmount = this.parseArgentineNumber(currentInput.value) || 0;
 
     if (targetAmount <= 0) {
       this.showNotification('⚠️ El monto objetivo debe ser mayor a 0', 'error');
@@ -415,8 +418,10 @@ class FinancialAdvisor {
     const formData = new FormData(form);
 
     const frequency = formData.get('income-frequency') as string;
-    const amount = parseFloat((formData.get('income-amount') as string) || '0');
-    const additionalIncome = parseFloat(
+    const amount = this.parseArgentineNumber(
+      (formData.get('income-amount') as string) || '0'
+    );
+    const additionalIncome = this.parseArgentineNumber(
       (formData.get('additional-income') as string) || '0'
     );
 
@@ -519,7 +524,7 @@ class FinancialAdvisor {
     const recommendations: string[] = [];
 
     if (debtRatio > 80) {
-      score = Math.max(0, 100 - (debtRatio - 80) * 5);
+      score = Math.round(Math.max(0, 100 - (debtRatio - 80) * 5));
       status = 'malo';
       color = '#ef4444';
       icon = '🔴';
@@ -528,7 +533,7 @@ class FinancialAdvisor {
       );
       recommendations.push('Busca fuentes adicionales de ingresos.');
     } else if (debtRatio > 60) {
-      score = Math.max(20, 100 - (debtRatio - 60) * 2);
+      score = Math.round(Math.max(20, 100 - (debtRatio - 60) * 2));
       status = 'regular';
       color = '#f59e0b';
       icon = '🟡';
@@ -536,7 +541,7 @@ class FinancialAdvisor {
         'Tu ratio de endeudamiento es moderado. Revisa gastos no esenciales.'
       );
     } else if (debtRatio > 40) {
-      score = Math.max(60, 100 - (debtRatio - 40) * 1);
+      score = Math.round(Math.max(60, 100 - (debtRatio - 40) * 1));
       status = 'bueno';
       color = '#06b6d4';
       icon = '🔵';
@@ -568,6 +573,11 @@ class FinancialAdvisor {
     this.updateExpensesList();
     this.updateGoalsUI();
     this.updateAnalysisUI();
+
+    // Reaplicar formateo después de actualizar el contenido
+    setTimeout(() => {
+      this.applyNumberFormattingToInputs();
+    }, 100);
   }
 
   private updateDashboard(): void {
@@ -829,6 +839,157 @@ class FinancialAdvisor {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  }
+
+  // Funciones para formateo de números argentinos
+  private formatArgentineNumber(value: string): string {
+    if (!value) return '';
+
+    // Remover caracteres no numéricos excepto comas y puntos
+    let cleanValue = value.replace(/[^\d,\.]/g, '');
+
+    // Evitar múltiples comas
+    const commaCount = (cleanValue.match(/,/g) || []).length;
+    if (commaCount > 1) {
+      const firstCommaIndex = cleanValue.indexOf(',');
+      cleanValue =
+        cleanValue.substring(0, firstCommaIndex + 1) +
+        cleanValue.substring(firstCommaIndex + 1).replace(/,/g, '');
+    }
+
+    // Si hay coma, separar parte entera y decimal
+    const parts = cleanValue.split(',');
+    let integerPart = parts[0] || '';
+    let decimalPart = parts[1] || '';
+
+    // Remover puntos de la parte entera para limpiar
+    integerPart = integerPart.replace(/\./g, '');
+
+    // Limitar a 15 dígitos para evitar números excesivamente grandes
+    if (integerPart.length > 15) {
+      integerPart = integerPart.substring(0, 15);
+    }
+
+    // Si la parte entera tiene más de 3 dígitos, agregar puntos cada 3 dígitos
+    if (integerPart.length > 3) {
+      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // Combinar parte entera y decimal
+    let result = integerPart;
+    if (parts.length > 1) {
+      // Limitar parte decimal a 2 dígitos
+      decimalPart = decimalPart.substring(0, 2);
+      result += ',' + decimalPart;
+    }
+
+    return result;
+  }
+
+  private parseArgentineNumber(value: string): number {
+    // Convertir formato argentino a número
+    // Ejemplo: "1.500,75" -> 1500.75
+    if (!value) return 0;
+
+    let cleanValue = value.toString();
+
+    // Si hay coma, es el separador decimal
+    if (cleanValue.includes(',')) {
+      const parts = cleanValue.split(',');
+      const integerPart = parts[0].replace(/\./g, ''); // Remover puntos (separadores de miles)
+      const decimalPart = parts[1] || '0';
+      cleanValue = integerPart + '.' + decimalPart;
+    } else {
+      // Solo remover puntos si no hay coma
+      cleanValue = cleanValue.replace(/\./g, '');
+    }
+
+    return parseFloat(cleanValue) || 0;
+  }
+
+  private setupNumberFormatting(): void {
+    // Aplicar formateo a todos los campos numéricos
+    this.applyNumberFormattingToInputs();
+
+    // Observar nuevos elementos que se agregan dinámicamente
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            const newInputs = element.querySelectorAll(
+              'input[type="number"], input.numeric-input, input[data-format="currency"]'
+            );
+            this.applyFormattingToElements(newInputs);
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  private applyNumberFormattingToInputs(): void {
+    const numericInputs = document.querySelectorAll(
+      'input[type="number"], input.numeric-input, input[data-format="currency"]'
+    );
+    this.applyFormattingToElements(numericInputs);
+  }
+
+  private applyFormattingToElements(inputs: NodeListOf<Element>): void {
+    inputs.forEach((input) => {
+      const inputElement = input as HTMLInputElement;
+
+      // Evitar aplicar formateo múltiples veces
+      if (inputElement.classList.contains('formatted-number')) {
+        return;
+      }
+
+      // Cambiar tipo a text para permitir formateo
+      inputElement.type = 'text';
+      inputElement.classList.add('formatted-number');
+
+      // Permitir solo caracteres numéricos, puntos, comas y espacios
+      inputElement.addEventListener('keypress', (e) => {
+        const char = String.fromCharCode(e.which);
+        if (!/[0-9\.,\s]/.test(char)) {
+          e.preventDefault();
+        }
+      });
+
+      // Evento de entrada (mientras escribe)
+      inputElement.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const cursorPosition = target.selectionStart || 0;
+        const oldValue = target.value;
+        const newValue = this.formatArgentineNumber(target.value);
+
+        target.value = newValue;
+
+        // Ajustar posición del cursor solo si el valor cambió
+        if (newValue !== oldValue) {
+          const lengthDiff = newValue.length - oldValue.length;
+          const newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
+          target.setSelectionRange(newCursorPosition, newCursorPosition);
+        }
+      });
+
+      // Evento de pegado
+      inputElement.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const paste = (
+          e.clipboardData || (window as any).clipboardData
+        ).getData('text');
+        const target = e.target as HTMLInputElement;
+        target.value = this.formatArgentineNumber(paste);
+      });
+
+      // Validación en blur
+      inputElement.addEventListener('blur', (e) => {
+        const target = e.target as HTMLInputElement;
+        target.value = this.formatArgentineNumber(target.value);
+      });
+    });
   }
 
   private saveToStorage(): void {
@@ -1524,7 +1685,7 @@ class FinancialAdvisor {
 
     if (newAmount === null) return;
 
-    const amount = parseFloat(newAmount);
+    const amount = this.parseArgentineNumber(newAmount);
     if (isNaN(amount) || amount < 0) {
       this.showNotification('⚠️ Monto inválido', 'error');
       return;
@@ -1985,6 +2146,264 @@ class FinancialAdvisor {
     }
 
     return recommendations;
+  }
+
+  // Cargar datos de ejemplo diferentes cada vez (tipos corregidos y categorías válidas)
+  private _sampleDataIndex = 0;
+  private _sampleDataSets = [
+    {
+      income: { amount: 3500, type: 'mensual' as const, frequency: 1 },
+      expenses: [
+        {
+          id: '1',
+          name: 'Alquiler',
+          amount: 1200,
+          frequency: 'mensual' as const,
+          category: 'housing',
+          type: 'fijo' as const,
+        },
+        {
+          id: '2',
+          name: 'Supermercado',
+          amount: 400,
+          frequency: 'mensual' as const,
+          category: 'food',
+          type: 'variable' as const,
+        },
+        {
+          id: '3',
+          name: 'Transporte público',
+          amount: 80,
+          frequency: 'mensual' as const,
+          category: 'transport',
+          type: 'fijo' as const,
+        },
+        {
+          id: '4',
+          name: 'Seguro médico',
+          amount: 150,
+          frequency: 'mensual' as const,
+          category: 'health',
+          type: 'fijo' as const,
+        },
+        {
+          id: '5',
+          name: 'Netflix',
+          amount: 15,
+          frequency: 'mensual' as const,
+          category: 'entertainment',
+          type: 'fijo' as const,
+        },
+      ],
+      goals: [
+        {
+          id: '1',
+          name: 'Fondo de Emergencia',
+          targetAmount: 10000,
+          currentAmount: 2500,
+          targetDate: '2025-12-31',
+          category: 'emergencia' as const,
+          priority: 'alta' as const,
+          description:
+            'Ahorrar para cubrir 6 meses de gastos en caso de emergencia',
+          createdAt: '2025-01-01',
+        },
+        {
+          id: '2',
+          name: 'Vacaciones en Europa',
+          targetAmount: 5000,
+          currentAmount: 1200,
+          targetDate: '2026-07-01',
+          category: 'compra' as const,
+          priority: 'media' as const,
+          description: 'Viaje de 2 semanas por Europa',
+          createdAt: '2025-01-01',
+        },
+      ],
+    },
+    {
+      income: { amount: 5000, type: 'mensual' as const, frequency: 1 },
+      expenses: [
+        {
+          id: '1',
+          name: 'Hipoteca',
+          amount: 1800,
+          frequency: 'mensual' as const,
+          category: 'housing',
+          type: 'fijo' as const,
+        },
+        {
+          id: '2',
+          name: 'Comida',
+          amount: 600,
+          frequency: 'mensual' as const,
+          category: 'food',
+          type: 'variable' as const,
+        },
+        {
+          id: '3',
+          name: 'Auto',
+          amount: 300,
+          frequency: 'mensual' as const,
+          category: 'transport',
+          type: 'fijo' as const,
+        },
+        {
+          id: '4',
+          name: 'Colegio',
+          amount: 400,
+          frequency: 'mensual' as const,
+          category: 'education',
+          type: 'fijo' as const,
+        },
+        {
+          id: '5',
+          name: 'Gimnasio',
+          amount: 50,
+          frequency: 'mensual' as const,
+          category: 'health',
+          type: 'fijo' as const,
+        },
+      ],
+      goals: [
+        {
+          id: '1',
+          name: 'Comprar Auto Nuevo',
+          targetAmount: 15000,
+          currentAmount: 3000,
+          targetDate: '2026-03-01',
+          category: 'compra' as const,
+          priority: 'alta' as const,
+          description: 'Ahorro para auto nuevo',
+          createdAt: '2025-01-01',
+        },
+        {
+          id: '2',
+          name: 'Fondo Universitario',
+          targetAmount: 20000,
+          currentAmount: 5000,
+          targetDate: '2028-09-01',
+          category: 'ahorro' as const,
+          priority: 'alta' as const,
+          description: 'Ahorro para universidad de los hijos',
+          createdAt: '2025-01-01',
+        },
+      ],
+    },
+    {
+      income: { amount: 2500, type: 'mensual' as const, frequency: 1 },
+      expenses: [
+        {
+          id: '1',
+          name: 'Renta',
+          amount: 900,
+          frequency: 'mensual' as const,
+          category: 'housing',
+          type: 'fijo' as const,
+        },
+        {
+          id: '2',
+          name: 'Comida',
+          amount: 350,
+          frequency: 'mensual' as const,
+          category: 'food',
+          type: 'variable' as const,
+        },
+        {
+          id: '3',
+          name: 'Transporte',
+          amount: 60,
+          frequency: 'mensual' as const,
+          category: 'transport',
+          type: 'fijo' as const,
+        },
+        {
+          id: '4',
+          name: 'Internet',
+          amount: 40,
+          frequency: 'mensual' as const,
+          category: 'utilities',
+          type: 'fijo' as const,
+        },
+        {
+          id: '5',
+          name: 'Cine',
+          amount: 30,
+          frequency: 'mensual' as const,
+          category: 'entertainment',
+          type: 'variable' as const,
+        },
+      ],
+      goals: [
+        {
+          id: '1',
+          name: 'Ahorro Vacaciones',
+          targetAmount: 2000,
+          currentAmount: 500,
+          targetDate: '2025-11-01',
+          category: 'ahorro' as const,
+          priority: 'media' as const,
+          description: 'Vacaciones familiares',
+          createdAt: '2025-01-01',
+        },
+        {
+          id: '2',
+          name: 'Laptop Nueva',
+          targetAmount: 1200,
+          currentAmount: 200,
+          targetDate: '2025-10-01',
+          category: 'compra' as const,
+          priority: 'baja' as const,
+          description: 'Actualizar equipo de trabajo',
+          createdAt: '2025-01-01',
+        },
+      ],
+    },
+  ];
+
+  public loadSampleData(): void {
+    // Rotar entre los diferentes ejemplos
+    const data = this._sampleDataSets[this._sampleDataIndex];
+    this._sampleDataIndex =
+      (this._sampleDataIndex + 1) % this._sampleDataSets.length;
+    this.data.income = { ...data.income };
+    this.data.expenses = data.expenses.map((e) => ({ ...e }));
+    this.data.goals = data.goals.map((g) => ({ ...g }));
+    this.saveToStorage();
+    this.updateUI();
+
+    // Actualizar formularios con datos formateados
+    this.populateFormsWithSampleData(data);
+
+    this.showNotification(
+      '✅ Datos de ejemplo cargados (variante diferente)',
+      'success'
+    );
+  }
+
+  private populateFormsWithSampleData(data: any): void {
+    // Llenar formulario de ingresos
+    const incomeAmountInput = document.getElementById(
+      'income-amount'
+    ) as HTMLInputElement;
+    const additionalIncomeInput = document.getElementById(
+      'additional-income'
+    ) as HTMLInputElement;
+
+    if (incomeAmountInput && data.income) {
+      incomeAmountInput.value = this.formatArgentineNumber(
+        data.income.amount.toString()
+      );
+    }
+
+    if (additionalIncomeInput) {
+      additionalIncomeInput.value = '';
+    }
+
+    // Aplicar formateo a todos los campos después de un pequeño delay
+    setTimeout(() => {
+      this.applyNumberFormattingToInputs();
+    }, 50);
   }
 }
 
