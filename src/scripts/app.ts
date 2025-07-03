@@ -2077,12 +2077,7 @@ class FinancialAdvisor {
     const recommendations = this.generateAnalysisRecommendations(metrics);
 
     if (recommendations.length === 0) {
-      container.innerHTML = `
-        <div class="no-data-message">
-          <span class="icon">🤔</span>
-          <p>Las recomendaciones aparecerán cuando haya datos financieros disponibles</p>
-        </div>
-      `;
+      container.innerHTML = '<div class="no-data-message"><span class="icon">🤔</span><p>Las recomendaciones aparecerán cuando haya datos financieros disponibles</p></div>';
       return;
     }
 
