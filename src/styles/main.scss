@@ -294,7 +294,11 @@ body {
 
 // Header AI Chat Button
 #ai-chat-float-toggle {
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--primary-light)
+  );
   border: none;
   color: white;
   font-size: 1.2rem;
@@ -1966,21 +1970,21 @@ body {
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform: translateY(0);
   opacity: 1;
-  
+
   // Animación de entrada
   &.chat-opening {
     animation: chatSlideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
-  
+
   // Animación de salida
   &.chat-closing {
     animation: chatSlideDown 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
-  
+
   &.minimized {
     max-height: 80px;
     transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    
+
     .ai-chat-body {
       opacity: 0;
       transform: translateY(-10px);
@@ -1989,16 +1993,16 @@ body {
       height: 0;
       overflow: hidden;
     }
-    
+
     .toggle-icon {
       // Ocultar el contenido original (X)
       font-size: 0;
       color: transparent;
       transition: all 0.3s ease;
-      
+
       // Mostrar la flecha hacia arriba cuando está minimizado
       &::before {
-        content: "⌃";
+        content: '⌃';
         font-size: 1.6rem;
         font-weight: bold;
         line-height: 1;
@@ -2019,17 +2023,17 @@ body {
     bottom: 80px;
     right: 15px;
     max-height: 500px;
-    
+
     &.minimized {
       display: none; // Hide completely on mobile when minimized, show float button instead
     }
   }
-  
+
   @media (max-width: 480px) {
     width: 300px;
     right: 10px;
     bottom: 70px;
-    
+
     &.minimized {
       display: none; // Hide completely on mobile when minimized
     }
@@ -2040,7 +2044,11 @@ body {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--primary-light)
+  );
   color: white;
   user-select: none;
   position: relative;
@@ -2064,12 +2072,13 @@ body {
       font-size: 0.8rem;
       opacity: 0.9;
     }
-  }  .ai-chat-controls {
+  }
+  .ai-chat-controls {
     display: flex;
     gap: 0.5rem;
     align-items: center;
   }
-  
+
   .ai-chat-toggle {
     background: none;
     border: none;
@@ -2082,17 +2091,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.1);
     }
   }
-  
+
   .toggle-icon {
     transition: all 0.3s ease;
     font-weight: bold;
     display: inline-block;
-    
+
     // Animación de rotación cuando cambia
     &.changing {
       animation: iconChange 0.3s ease-in-out;
@@ -2447,7 +2456,11 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--primary-light)
+  );
   color: white;
   border: none;
   box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
@@ -2472,7 +2485,8 @@ body {
   }
 
   &.hide {
-    animation: floatButtonDisappear 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    animation: floatButtonDisappear 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)
+      forwards;
   }
 
   @media (max-width: 768px) {

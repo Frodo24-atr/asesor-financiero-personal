@@ -3350,23 +3350,23 @@ ${this.data.goals
     const container = document.getElementById('ai-chat-container');
     const floatBtn = document.getElementById('ai-chat-float-btn');
     const chatBody = document.querySelector('.ai-chat-body') as HTMLElement;
-    
+
     if (container) {
       // Limpiar clases de animación anteriores
       container.classList.remove('closed', 'minimized', 'chat-closing');
       container.style.display = 'block';
-      
+
       // Añadir animación de apertura
       container.classList.add('chat-opening');
-      
+
       // Remover la clase de animación después de que termine
       setTimeout(() => {
         container.classList.remove('chat-opening');
       }, 400);
-      
+
       this.aiAssistant.isMinimized = false;
     }
-    
+
     // Animar el body del chat
     if (chatBody) {
       chatBody.classList.add('expanding');
@@ -3374,7 +3374,7 @@ ${this.data.goals
         chatBody.classList.remove('expanding');
       }, 300);
     }
-    
+
     // Ocultar botón flotante con animación
     if (floatBtn && floatBtn.classList.contains('show')) {
       floatBtn.classList.add('hide');
@@ -3382,26 +3382,28 @@ ${this.data.goals
         floatBtn.classList.remove('show', 'hide');
       }, 300);
     }
-    
+
     this.hideChatNotification();
     this.updateFloatButton();
   }
 
   private toggleChatAssistant(): void {
     const container = document.getElementById('ai-chat-container');
-    
+
     if (!container) return;
-    
+
     const isMinimized = container.classList.contains('minimized');
-    const isClosed = container.classList.contains('closed') || container.style.display === 'none';
-    
+    const isClosed =
+      container.classList.contains('closed') ||
+      container.style.display === 'none';
+
     if (isClosed || isMinimized) {
       // Si está cerrado o minimizado, abrir completamente
       this.openChatAssistant();
     } else {
       // Si está abierto, cerrar completamente con animación
       container.classList.add('chat-closing');
-      
+
       // Después de la animación, ocultar completamente y mostrar botón flotante
       setTimeout(() => {
         container.style.display = 'none';
@@ -3415,15 +3417,17 @@ ${this.data.goals
   private updateFloatButton(): void {
     const container = document.getElementById('ai-chat-container');
     const floatBtn = document.getElementById('ai-chat-float-btn');
-    
+
     if (!container || !floatBtn) return;
-    
+
     const isMinimized = container.classList.contains('minimized');
-    const isClosed = container.classList.contains('closed') || container.style.display === 'none';
+    const isClosed =
+      container.classList.contains('closed') ||
+      container.style.display === 'none';
     const isMobile = window.innerWidth <= 768;
     const shouldShow = isClosed || (isMobile && isMinimized);
     const isCurrentlyShowing = floatBtn.classList.contains('show');
-    
+
     if (shouldShow && !isCurrentlyShowing) {
       // Mostrar con animación
       floatBtn.classList.remove('hide');
@@ -3440,13 +3444,13 @@ ${this.data.goals
   private showInitialChatNotification(): void {
     // Only show notification if user hasn't seen it before
     const hasSeenNotification = localStorage.getItem('chat-notification-seen');
-    
+
     if (!hasSeenNotification) {
       setTimeout(() => {
         const notification = document.getElementById('ai-chat-notification');
         if (notification) {
           notification.classList.add('show');
-          
+
           // Auto hide after 10 seconds
           setTimeout(() => {
             this.hideChatNotification();
