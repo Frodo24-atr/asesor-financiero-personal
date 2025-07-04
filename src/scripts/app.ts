@@ -2901,7 +2901,7 @@ class FinancialAdvisor {
 
     // Setup event listeners
     this.setupAIEventListeners();
-    
+
     // Setup outside click and swipe to close
     this.handleChatOutsideInteractions();
 
@@ -3374,18 +3374,18 @@ ${this.data.goals
     if (container) {
       console.log('Container current display:', container.style.display);
       console.log('Container classes before:', container.className);
-      
+
       // Mostrar el contenedor si está oculto
       container.style.display = 'block';
-      
+
       // Remover clases de estado anteriores
       container.classList.remove('chat-minimized', 'chat-closing', 'closed');
-      
+
       // Añadir animación de apertura
       container.classList.add('chat-opening');
-      
+
       console.log('Container classes after:', container.className);
-      
+
       // Remover la clase de animación después de que termine
       setTimeout(() => {
         container.classList.remove('chat-opening');
@@ -3507,13 +3507,15 @@ ${this.data.goals
       const isClickInsideChat = container.contains(target);
       const isHeaderButton = target.closest('#ai-chat-float-toggle');
       const isFloatButton = target.closest('#ai-chat-float-btn');
-      
+
       // Only close if chat is open, click is outside, and not on control buttons
-      if (!container.classList.contains('closed') && 
-          !container.classList.contains('minimized') &&
-          !isClickInsideChat && 
-          !isHeaderButton && 
-          !isFloatButton) {
+      if (
+        !container.classList.contains('closed') &&
+        !container.classList.contains('minimized') &&
+        !isClickInsideChat &&
+        !isHeaderButton &&
+        !isFloatButton
+      ) {
         this.closeChatAssistant();
       }
     });
@@ -3523,32 +3525,41 @@ ${this.data.goals
     let startX = 0;
     const minSwipeDistance = 50;
 
-    document.addEventListener('touchstart', (e) => {
-      startY = e.touches[0].clientY;
-      startX = e.touches[0].clientX;
-    }, { passive: true });
+    document.addEventListener(
+      'touchstart',
+      (e) => {
+        startY = e.touches[0].clientY;
+        startX = e.touches[0].clientX;
+      },
+      { passive: true }
+    );
 
-    document.addEventListener('touchend', (e) => {
-      if (!e.changedTouches[0]) return;
-      
-      const endY = e.changedTouches[0].clientY;
-      const endX = e.changedTouches[0].clientX;
-      const deltaY = endY - startY;
-      const deltaX = endX - startX;
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      
-      // Check if it's a swipe (minimum distance) and chat is open
-      if (distance > minSwipeDistance && 
-          !container.classList.contains('closed') && 
-          !container.classList.contains('minimized')) {
-        
-        // Check if swipe started outside the chat container
-        const startElement = document.elementFromPoint(startX, startY);
-        if (startElement && !container.contains(startElement)) {
-          this.closeChatAssistant();
+    document.addEventListener(
+      'touchend',
+      (e) => {
+        if (!e.changedTouches[0]) return;
+
+        const endY = e.changedTouches[0].clientY;
+        const endX = e.changedTouches[0].clientX;
+        const deltaY = endY - startY;
+        const deltaX = endX - startX;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        // Check if it's a swipe (minimum distance) and chat is open
+        if (
+          distance > minSwipeDistance &&
+          !container.classList.contains('closed') &&
+          !container.classList.contains('minimized')
+        ) {
+          // Check if swipe started outside the chat container
+          const startElement = document.elementFromPoint(startX, startY);
+          if (startElement && !container.contains(startElement)) {
+            this.closeChatAssistant();
+          }
         }
-      }
-    }, { passive: true });
+      },
+      { passive: true }
+    );
   }
 
   private closeChatAssistant(): void {
