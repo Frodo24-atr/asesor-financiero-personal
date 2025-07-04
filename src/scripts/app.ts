@@ -2360,7 +2360,7 @@ class FinancialAdvisor {
           name: 'Internet',
           amount: 40,
           frequency: 'mensual' as const,
-          category: 'utilities',
+          category: 'services',
           type: 'fijo' as const,
         },
         {
@@ -2397,11 +2397,117 @@ class FinancialAdvisor {
         },
       ],
     },
+    {
+      // NUEVO: Perfil Emprendedor/Freelancer
+      income: { amount: 4200, type: 'mensual' as const, frequency: 1 },
+      expenses: [
+        {
+          id: '1',
+          name: 'Oficina/Coworking',
+          amount: 800,
+          frequency: 'mensual' as const,
+          category: 'housing',
+          type: 'fijo' as const,
+        },
+        {
+          id: '2',
+          name: 'Alimentación',
+          amount: 500,
+          frequency: 'mensual' as const,
+          category: 'food',
+          type: 'variable' as const,
+        },
+        {
+          id: '3',
+          name: 'Software y Apps',
+          amount: 150,
+          frequency: 'mensual' as const,
+          category: 'services',
+          type: 'fijo' as const,
+        },
+        {
+          id: '4',
+          name: 'Marketing Digital',
+          amount: 300,
+          frequency: 'mensual' as const,
+          category: 'services',
+          type: 'variable' as const,
+        },
+        {
+          id: '5',
+          name: 'Capacitación Online',
+          amount: 120,
+          frequency: 'mensual' as const,
+          category: 'education',
+          type: 'variable' as const,
+        },
+        {
+          id: '6',
+          name: 'Seguro de Salud',
+          amount: 180,
+          frequency: 'mensual' as const,
+          category: 'health',
+          type: 'fijo' as const,
+        },
+        {
+          id: '7',
+          name: 'Transporte/Combustible',
+          amount: 200,
+          frequency: 'mensual' as const,
+          category: 'transport',
+          type: 'variable' as const,
+        },
+        {
+          id: '8',
+          name: 'Entretenimiento',
+          amount: 80,
+          frequency: 'mensual' as const,
+          category: 'entertainment',
+          type: 'variable' as const,
+        },
+      ],
+      goals: [
+        {
+          id: '1',
+          name: 'Expansión del Negocio',
+          targetAmount: 25000,
+          currentAmount: 8000,
+          targetDate: '2026-06-01',
+          category: 'inversion' as const,
+          priority: 'alta' as const,
+          description: 'Contratar equipo y ampliar servicios',
+          createdAt: '2025-01-01',
+        },
+        {
+          id: '2',
+          name: 'Fondo de Emergencia',
+          targetAmount: 15000,
+          currentAmount: 4500,
+          targetDate: '2025-12-01',
+          category: 'emergencia' as const,
+          priority: 'alta' as const,
+          description: 'Seguridad financiera para 6 meses',
+          createdAt: '2025-01-01',
+        },
+        {
+          id: '3',
+          name: 'Equipamiento Tecnológico',
+          targetAmount: 8000,
+          currentAmount: 2000,
+          targetDate: '2025-09-01',
+          category: 'compra' as const,
+          priority: 'media' as const,
+          description: 'Actualizar computadora y equipos',
+          createdAt: '2025-01-01',
+        },
+      ],
+    },
   ];
 
   public loadSampleData(): void {
     // Rotar entre los diferentes ejemplos
     const data = this._sampleDataSets[this._sampleDataIndex];
+    const currentProfileIndex = this._sampleDataIndex;
     this._sampleDataIndex =
       (this._sampleDataIndex + 1) % this._sampleDataSets.length;
     this.data.income = { ...data.income };
@@ -2413,10 +2519,15 @@ class FinancialAdvisor {
     // Actualizar formularios con datos formateados
     this.populateFormsWithSampleData(data);
 
-    this.showNotification(
-      '✅ Datos de ejemplo cargados (variante diferente)',
-      'success'
-    );
+    // Mostrar mensaje diferente según el perfil cargado
+    const profileMessages = [
+      '✅ Datos cargados: Perfil Empleado Promedio (Ingreso: $3.500)',
+      '✅ Datos cargados: Perfil Familia con Hijos (Ingreso: $5.000)',
+      '✅ Datos cargados: Perfil Joven Profesional (Ingreso: $2.500)',
+      '✅ Datos cargados: Perfil Emprendedor/Freelancer (Ingreso: $4.200)',
+    ];
+
+    this.showNotification(profileMessages[currentProfileIndex], 'success');
   }
 
   private populateFormsWithSampleData(data: any): void {
