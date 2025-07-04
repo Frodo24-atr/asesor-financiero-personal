@@ -2880,7 +2880,7 @@ class FinancialAdvisor {
   private initializeAIAssistant(): void {
     // First, try to use the environment API key
     const envApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    
+
     if (envApiKey) {
       // Use the API key from environment variables
       this.configureOpenAI(envApiKey);
@@ -2895,49 +2895,95 @@ class FinancialAdvisor {
 
     // Setup event listeners
     this.setupAIEventListeners();
-    
+
     // Load chat history
     this.loadChatHistory();
-    
+
+    // Initialize chat UI state
+    this.initializeChatState();
+
     // If AI is configured, show ready message
     if (this.aiAssistant.isConfigured) {
       setTimeout(() => {
         this.addAutoConfigWelcomeMessage();
       }, 1000);
     }
+
+    // Listen for window resize to update float button
+    window.addEventListener('resize', () => {
+      this.updateFloatButton();
+    });
+  }
+
+  private initializeChatState(): void {
+    // Initially minimize the chat
+    const container = document.getElementById('ai-chat-container');
+    if (container) {
+      container.classList.add('minimized');
+      this.aiAssistant.isMinimized = true;
+    }
+
+    // Update float button based on screen size
+    this.updateFloatButton();
   }
 
   private addAutoConfigWelcomeMessage(): void {
     // Only add if there are no messages yet (fresh start)
     if (this.aiAssistant.messages.length === 0) {
-      this.addMessageToChat('assistant', 
+      this.addMessageToChat(
+        'assistant',
         '🎉 ¡Asistente IA activado automáticamente! Ya puedes hacer preguntas sobre tus finanzas sin configuración adicional.'
       );
     }
   }
 
   private setupAIEventListeners(): void {
-    // Chat toggle
+    // Chat toggle (único botón)
     const chatToggle = document.getElementById('ai-chat-toggle');
     const chatHeader = document.querySelector('.ai-chat-header');
-    
-    if (chatToggle && chatHeader) {
-      const toggleChat = () => {
-        const container = document.getElementById('ai-chat-container');
-        if (container) {
-          container.classList.toggle('minimized');
-          this.aiAssistant.isMinimized = container.classList.contains('minimized');
+
+    if (chatToggle) {
+      chatToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleChatAssistant();
+      });
+    }
+
+    if (chatHeader) {
+      chatHeader.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        // Solo expandir si se hace click en el header pero no en el botón
+        if (!target.closest('.ai-chat-toggle')) {
+          const container = document.getElementById('ai-chat-container');
+          if (container && container.classList.contains('minimized')) {
+            this.openChatAssistant();
+          }
         }
-      };
-      
-      chatToggle.addEventListener('click', toggleChat);
-      chatHeader.addEventListener('click', toggleChat);
+      });
+    }
+
+    // Float buttons
+    const floatBtn = document.getElementById('ai-chat-float-btn');
+    const floatToggle = document.getElementById('ai-chat-float-toggle');
+
+    // Float button (Messenger style)
+    if (floatBtn) {
+      floatBtn.addEventListener('click', () => {
+        this.openChatAssistant();
+      });
+    }
+
+    // Header float toggle
+    if (floatToggle) {
+      floatToggle.addEventListener('click', () => {
+        this.openChatAssistant();
+      });
     }
 
     // Send message
     const sendBtn = document.getElementById('ai-send-btn');
     const input = document.getElementById('ai-input') as HTMLInputElement;
-    
+
     if (sendBtn && input) {
       const sendMessage = () => {
         const message = input.value.trim();
@@ -2961,7 +3007,7 @@ class FinancialAdvisor {
     }
 
     // Quick actions
-    document.querySelectorAll('.quick-action-btn').forEach(btn => {
+    document.querySelectorAll('.quick-action-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const action = (e.target as HTMLElement).dataset.action;
         if (action) {
@@ -2970,28 +3016,50 @@ class FinancialAdvisor {
       });
     });
 
+    // Notification close
+    const notificationClose = document.getElementById('notification-close');
+    if (notificationClose) {
+      notificationClose.addEventListener('click', () => {
+        this.hideChatNotification();
+      });
+    }
+
+    // Notification click to open chat
+    const notification = document.getElementById('ai-chat-notification');
+    if (notification) {
+      notification.addEventListener('click', (e) => {
+        if (e.target !== notificationClose) {
+          this.openChatAssistant();
+          this.hideChatNotification();
+        }
+      });
+    }
+
     // API Configuration modal
     const saveApiKey = document.getElementById('save-api-key');
     const closeModal = document.getElementById('close-config-modal');
-    
+
     if (saveApiKey) {
       saveApiKey.addEventListener('click', () => {
         this.saveAPIKey();
       });
     }
-    
+
     if (closeModal) {
       closeModal.addEventListener('click', () => {
         this.hideAPIConfigModal();
       });
     }
+
+    // Show initial notification if this is first visit
+    this.showInitialChatNotification();
   }
 
   private configureOpenAI(apiKey: string): void {
     try {
       this.aiAssistant.openai = new OpenAI({
         apiKey: apiKey,
-        dangerouslyAllowBrowser: true
+        dangerouslyAllowBrowser: true,
       });
       this.aiAssistant.isConfigured = true;
     } catch (error) {
@@ -3008,14 +3076,14 @@ class FinancialAdvisor {
 
     // Add user message
     this.addMessageToChat('user', message);
-    
+
     // Show typing indicator
     this.showTypingIndicator();
 
     try {
       // Get financial context
       const context = this.getFinancialContext();
-      
+
       // Prepare messages for OpenAI
       const messages = [
         {
@@ -3032,16 +3100,16 @@ Instrucciones:
 - Usa emojis ocasionalmente para hacer la conversación más amena
 - Si no tienes datos suficientes, pide al usuario que configure más información
 - Enfócate en educación financiera y recomendaciones personalizadas
-- Menciona montos en pesos argentinos (ARS) cuando sea relevante`
+- Menciona montos en pesos argentinos (ARS) cuando sea relevante`,
         },
-        ...this.aiAssistant.messages.slice(-5).map(msg => ({
+        ...this.aiAssistant.messages.slice(-5).map((msg) => ({
           role: msg.role,
-          content: msg.content
+          content: msg.content,
         })),
         {
           role: 'user' as const,
-          content: message
-        }
+          content: message,
+        },
       ];
 
       const response = await this.aiAssistant.openai.chat.completions.create({
@@ -3051,18 +3119,22 @@ Instrucciones:
         temperature: 0.7,
       });
 
-      const aiResponse = response.choices[0]?.message?.content || 'Lo siento, no pude procesar tu solicitud. Intenta de nuevo.';
-      
+      const aiResponse =
+        response.choices[0]?.message?.content ||
+        'Lo siento, no pude procesar tu solicitud. Intenta de nuevo.';
+
       // Hide typing indicator
       this.hideTypingIndicator();
-      
+
       // Add AI response
       this.addMessageToChat('assistant', aiResponse);
-      
     } catch (error) {
       console.error('Error calling OpenAI:', error);
       this.hideTypingIndicator();
-      this.addMessageToChat('assistant', '❌ Lo siento, ocurrió un error al procesar tu solicitud. Verifica tu API key y conexión a internet.');
+      this.addMessageToChat(
+        'assistant',
+        '❌ Lo siento, ocurrió un error al procesar tu solicitud. Verifica tu API key y conexión a internet.'
+      );
     }
   }
 
@@ -3071,12 +3143,15 @@ Instrucciones:
     const monthlyExpenses = this.calculateMonthlyExpenses();
     const disposableIncome = monthlyIncome - monthlyExpenses;
     const health = this.calculateFinancialHealth();
-    
-    const expensesByCategory = this.data.expenses.reduce((acc, expense) => {
-      const monthlyAmount = this.getMonthlyExpenseAmount(expense);
-      acc[expense.category] = (acc[expense.category] || 0) + monthlyAmount;
-      return acc;
-    }, {} as Record<string, number>);
+
+    const expensesByCategory = this.data.expenses.reduce(
+      (acc, expense) => {
+        const monthlyAmount = this.getMonthlyExpenseAmount(expense);
+        acc[expense.category] = (acc[expense.category] || 0) + monthlyAmount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return `
 SITUACIÓN FINANCIERA ACTUAL:
@@ -3091,9 +3166,12 @@ ${Object.entries(expensesByCategory)
   .join('\n')}
 
 METAS FINANCIERAS:
-${this.data.goals.map(goal => 
-  `- ${goal.name}: ${this.formatCurrency(goal.currentAmount)}/${this.formatCurrency(goal.targetAmount)} (${((goal.currentAmount/goal.targetAmount)*100).toFixed(1)}%)`
-).join('\n')}
+${this.data.goals
+  .map(
+    (goal) =>
+      `- ${goal.name}: ${this.formatCurrency(goal.currentAmount)}/${this.formatCurrency(goal.targetAmount)} (${((goal.currentAmount / goal.targetAmount) * 100).toFixed(1)}%)`
+  )
+  .join('\n')}
 `;
   }
 
@@ -3104,9 +3182,12 @@ ${this.data.goals.map(goal =>
     }
 
     const quickActions = {
-      analyze: '📊 Analiza mi situación financiera actual y dame un resumen detallado',
-      recommendations: '💡 Dame 3 recomendaciones específicas para mejorar mis finanzas basándote en mis datos',
-      budget: '💰 Ayúdame a optimizar mi presupuesto mensual. ¿Dónde puedo ahorrar más?'
+      analyze:
+        '📊 Analiza mi situación financiera actual y dame un resumen detallado',
+      recommendations:
+        '💡 Dame 3 recomendaciones específicas para mejorar mis finanzas basándote en mis datos',
+      budget:
+        '💰 Ayúdame a optimizar mi presupuesto mensual. ¿Dónde puedo ahorrar más?',
     };
 
     const message = quickActions[action as keyof typeof quickActions];
@@ -3119,7 +3200,7 @@ ${this.data.goals.map(goal =>
     const message: AIMessage = {
       role,
       content,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.aiAssistant.messages.push(message);
@@ -3134,10 +3215,10 @@ ${this.data.goals.map(goal =>
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `ai-message ai-message-${message.role}`;
-    
+
     const avatar = message.role === 'user' ? '👤' : '🤖';
     const formattedContent = this.formatMessageContent(message.content);
-    
+
     messageDiv.innerHTML = `
       <div class="message-avatar">${avatar}</div>
       <div class="message-content">
@@ -3199,22 +3280,34 @@ ${this.data.goals.map(goal =>
       localStorage.setItem('openai-api-key', apiKey);
       this.configureOpenAI(apiKey);
       this.hideAPIConfigModal();
-      
+
       if (this.aiAssistant.isConfigured) {
-        this.showNotification('✅ API Key configurada correctamente. ¡El asistente IA está listo!', 'success');
+        this.showNotification(
+          '✅ API Key configurada correctamente. ¡El asistente IA está listo!',
+          'success'
+        );
         // Show welcome message
-        this.addMessageToChat('assistant', '¡Perfecto! 🎉 Ahora puedo ayudarte con tus finanzas. ¿En qué puedo asistirte hoy?');
+        this.addMessageToChat(
+          'assistant',
+          '¡Perfecto! 🎉 Ahora puedo ayudarte con tus finanzas. ¿En qué puedo asistirte hoy?'
+        );
       } else {
-        this.showNotification('❌ Error al configurar la API Key. Verifica que sea válida.', 'error');
+        this.showNotification(
+          '❌ Error al configurar la API Key. Verifica que sea válida.',
+          'error'
+        );
       }
-      
+
       input.value = '';
     }
   }
 
   private saveChatHistory(): void {
     try {
-      localStorage.setItem('ai-chat-history', JSON.stringify(this.aiAssistant.messages.slice(-50))); // Save last 50 messages
+      localStorage.setItem(
+        'ai-chat-history',
+        JSON.stringify(this.aiAssistant.messages.slice(-50))
+      ); // Save last 50 messages
     } catch (error) {
       console.error('Error saving chat history:', error);
     }
@@ -3226,7 +3319,7 @@ ${this.data.goals.map(goal =>
       if (saved) {
         this.aiAssistant.messages = JSON.parse(saved);
         // Re-render messages (skip the initial welcome message)
-        this.aiAssistant.messages.forEach(message => {
+        this.aiAssistant.messages.forEach((message) => {
           this.renderMessage(message);
         });
       }
@@ -3241,7 +3334,9 @@ ${this.data.goals.map(goal =>
     const messagesContainer = document.getElementById('ai-messages');
     if (messagesContainer) {
       // Keep only the initial welcome message
-      const welcomeMessage = messagesContainer.querySelector('.ai-message-assistant');
+      const welcomeMessage = messagesContainer.querySelector(
+        '.ai-message-assistant'
+      );
       messagesContainer.innerHTML = '';
       if (welcomeMessage) {
         messagesContainer.appendChild(welcomeMessage);
@@ -3249,6 +3344,87 @@ ${this.data.goals.map(goal =>
     }
     this.saveChatHistory();
     this.showNotification('🗑️ Historial de chat limpiado', 'info');
+  }
+
+  private openChatAssistant(): void {
+    const container = document.getElementById('ai-chat-container');
+    const floatBtn = document.getElementById('ai-chat-float-btn');
+    
+    if (container) {
+      container.style.display = 'block';
+      container.classList.remove('minimized', 'closed');
+      this.aiAssistant.isMinimized = false;
+    }
+    
+    if (floatBtn) {
+      floatBtn.classList.remove('show');
+    }
+    
+    this.hideChatNotification();
+  }
+
+  private toggleChatAssistant(): void {
+    const container = document.getElementById('ai-chat-container');
+    const toggleIcon = document.querySelector('.toggle-icon') as HTMLElement;
+    
+    if (!container || !toggleIcon) return;
+    
+    const isMinimized = container.classList.contains('minimized');
+    
+    if (isMinimized) {
+      // Si está minimizado, abrir completamente
+      this.openChatAssistant();
+    } else {
+      // Si está abierto, minimizar
+      container.classList.add('minimized');
+      this.aiAssistant.isMinimized = true;
+      this.updateFloatButton();
+    }
+  }
+
+  private updateFloatButton(): void {
+    const container = document.getElementById('ai-chat-container');
+    const floatBtn = document.getElementById('ai-chat-float-btn');
+    
+    if (!container || !floatBtn) return;
+    
+    const isMinimized = container.classList.contains('minimized');
+    const isClosed = container.classList.contains('closed');
+    const isMobile = window.innerWidth <= 768;
+    
+    // Show float button when chat is minimized on mobile or when chat is closed
+    if ((isMobile && isMinimized) || isClosed) {
+      floatBtn.classList.add('show');
+    } else {
+      floatBtn.classList.remove('show');
+    }
+  }
+
+  private showInitialChatNotification(): void {
+    // Only show notification if user hasn't seen it before
+    const hasSeenNotification = localStorage.getItem('chat-notification-seen');
+    
+    if (!hasSeenNotification) {
+      setTimeout(() => {
+        const notification = document.getElementById('ai-chat-notification');
+        if (notification) {
+          notification.classList.add('show');
+          
+          // Auto hide after 10 seconds
+          setTimeout(() => {
+            this.hideChatNotification();
+          }, 10000);
+        }
+      }, 2000); // Show after 2 seconds of page load
+    }
+  }
+
+  private hideChatNotification(): void {
+    const notification = document.getElementById('ai-chat-notification');
+    if (notification) {
+      notification.classList.remove('show');
+      localStorage.setItem('chat-notification-seen', 'true');
+    }
   }
 }
 

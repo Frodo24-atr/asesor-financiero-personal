@@ -130,6 +130,9 @@
             <button class="btn btn-outline" id="toggle-theme">
               <span class="theme-icon">🌙</span>
             </button>
+            <button class="btn btn-outline" id="ai-chat-float-toggle">
+              🤖
+            </button>
             <button class="btn btn-primary" id="export-report">
               📄 Exportar Reporte
             </button>
@@ -858,17 +861,22 @@
           <h3>Asistente Financiero IA</h3>
           <p>Tu consultor personal inteligente</p>
         </div>
-        <button class="ai-chat-toggle" id="ai-chat-toggle">
-          <span class="toggle-icon">💬</span>
-        </button>
+        <div class="ai-chat-controls">
+          <button class="ai-chat-toggle" id="ai-chat-toggle">
+            <span class="toggle-icon">✕</span>
+          </button>
+        </div>
       </div>
-      
+
       <div class="ai-chat-body" id="ai-chat-body">
         <div class="ai-messages" id="ai-messages">
           <div class="ai-message ai-message-assistant">
             <div class="message-avatar">🤖</div>
             <div class="message-content">
-              <p>¡Hola! Soy tu asistente financiero inteligente. Puedo ayudarte a:</p>
+              <p>
+                ¡Hola! Soy tu asistente financiero inteligente. Puedo ayudarte
+                a:
+              </p>
               <ul>
                 <li>📊 Analizar tus gastos e ingresos</li>
                 <li>💡 Darte recomendaciones personalizadas</li>
@@ -879,7 +887,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="ai-quick-actions">
           <button class="quick-action-btn" data-action="analyze">
             📊 Analizar mis finanzas
@@ -891,11 +899,11 @@
             💰 Optimizar presupuesto
           </button>
         </div>
-        
+
         <div class="ai-input-container">
-          <input 
-            type="text" 
-            id="ai-input" 
+          <input
+            type="text"
+            id="ai-input"
             placeholder="Escribe tu pregunta sobre finanzas..."
             maxlength="500"
           />
@@ -903,7 +911,7 @@
             <span class="send-icon">➤</span>
           </button>
         </div>
-        
+
         <div class="ai-typing-indicator" id="ai-typing-indicator">
           <div class="typing-dots">
             <span></span>
@@ -922,15 +930,17 @@
         <p>Para usar el asistente IA, necesitas una API Key de OpenAI:</p>
         <div class="form-group">
           <label for="openai-api-key">API Key de OpenAI:</label>
-          <input 
-            type="password" 
-            id="openai-api-key" 
+          <input
+            type="password"
+            id="openai-api-key"
             placeholder="sk-..."
             class="api-key-input"
           />
           <small class="form-help">
             Tu API key se guarda localmente y solo se usa para las consultas.
-            <a href="https://platform.openai.com/api-keys" target="_blank">Obtener API Key</a>
+            <a href="https://platform.openai.com/api-keys" target="_blank"
+              >Obtener API Key</a
+            >
           </small>
         </div>
         <div class="config-actions">
@@ -943,6 +953,23 @@
         </div>
       </div>
     </div>
+
+    <!-- AI Chat Notification -->
+    <div class="ai-chat-notification" id="ai-chat-notification">
+      <div class="notification-content">
+        <div class="notification-avatar">🤖</div>
+        <div class="notification-message">
+          <strong>¡Nuevo!</strong> Asistente IA disponible
+          <small>Haz click para obtener ayuda financiera personalizada</small>
+        </div>
+      </div>
+      <button class="notification-close" id="notification-close">✕</button>
+    </div>
+
+    <!-- Floating AI Button (Messenger style when minimized) -->
+    <button class="ai-chat-float-btn" id="ai-chat-float-btn">
+      🤖
+    </button>
 
     <!-- Scripts -->
     <script type="module" src="./scripts/app.ts"></script>

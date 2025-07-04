@@ -292,6 +292,20 @@ body {
   }
 }
 
+// Header AI Chat Button
+#ai-chat-float-toggle {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  }
+}
+
 // Navigation
 .navigation {
   background-color: var(--surface-color);
@@ -1837,21 +1851,54 @@ body {
   border: 1px solid var(--border-color);
   z-index: 1000;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &.minimized {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  &.minimized {
     max-height: 80px;
-
+    
     .ai-chat-body {
       display: none;
+    }
+    
+    .toggle-icon {
+      transform: rotate(0deg);
+      
+      // Cambiar el icono cuando está minimizado
+      &::before {
+        content: "⌃";
+        font-size: 1.6rem;
+        font-weight: bold;
+        line-height: 1;
+      }
+      
+      // Ocultar el contenido original (X)
+      font-size: 0;
+      color: transparent;
+    }
+  }
+
+  &.closed {
+    display: none;
+  }
+
+  // Estilo tipo Facebook Messenger para móviles
+  @media (max-width: 768px) {
+    width: 340px;
+    bottom: 80px;
+    right: 15px;
+    max-height: 500px;
+
+    &.minimized {
+      display: none; // Hide completely on mobile when minimized, show float button instead
     }
   }
 
   @media (max-width: 480px) {
-    width: calc(100vw - 40px);
-    right: 20px;
-    left: 20px;
-    bottom: 20px;
+    width: 300px;
+    right: 10px;
+    bottom: 70px;
+
+    &.minimized {
+      display: none; // Hide completely on mobile when minimized
+    }
   }
 }
 
@@ -1861,8 +1908,8 @@ body {
   padding: 1rem;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   color: white;
-  cursor: pointer;
   user-select: none;
+  position: relative;
 
   .ai-avatar {
     font-size: 2rem;
@@ -1883,8 +1930,12 @@ body {
       font-size: 0.8rem;
       opacity: 0.9;
     }
+  }  .ai-chat-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
-
+  
   .ai-chat-toggle {
     background: none;
     border: none;
@@ -1894,10 +1945,18 @@ body {
     padding: 0.5rem;
     border-radius: var(--radius);
     transition: var(--transition);
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
     &:hover {
       background: rgba(255, 255, 255, 0.1);
     }
+  }
+  
+  .toggle-icon {
+    transition: all 0.3s ease;
+    font-weight: bold;
   }
 }
 
@@ -2138,6 +2197,135 @@ body {
   40% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+// Chat Notification Bubble
+.ai-chat-notification {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 1rem;
+  max-width: 300px;
+  z-index: 999;
+  display: none;
+  animation: slideInFromRight 0.3s ease-out;
+
+  &.show {
+    display: block;
+  }
+
+  .notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+
+    .notification-avatar {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .notification-message {
+      flex: 1;
+      color: var(--text-primary);
+
+      strong {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      small {
+        display: block;
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+    }
+  }
+
+  .notification-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+
+    &:hover {
+      background: var(--surface-color);
+      color: var(--text-primary);
+    }
+  }
+
+  @media (max-width: 768px) {
+    bottom: 100px;
+    right: 15px;
+    max-width: 280px;
+  }
+
+  @media (max-width: 480px) {
+    bottom: 90px;
+    right: 10px;
+    max-width: 260px;
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Floating AI Button (cuando está minimizado en móvil)
+.ai-chat-float-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: white;
+  border: none;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 998;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+  }
+
+  &.show {
+    display: flex;
+  }
+
+  @media (max-width: 768px) {
+    bottom: 15px;
+    right: 15px;
+    width: 56px;
+    height: 56px;
+    font-size: 1.3rem;
   }
 }
 
