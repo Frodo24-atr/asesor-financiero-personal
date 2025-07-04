@@ -2901,6 +2901,9 @@ class FinancialAdvisor {
 
     // Setup event listeners
     this.setupAIEventListeners();
+    
+    // Setup outside click and swipe to close
+    this.handleChatOutsideInteractions();
 
     // Load chat history
     this.loadChatHistory();
@@ -2975,17 +2978,21 @@ class FinancialAdvisor {
     // Float button (Messenger style)
     if (floatBtn) {
       floatBtn.addEventListener('click', () => {
-        this.toggleChatAssistant();
+        this.openChatAssistant();
       });
     }
 
     // Header float toggle
     if (floatToggle) {
+      console.log('🤖 Event listener attached to header button');
       floatToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        console.log('🤖 Header chat button clicked - toggling');
         this.toggleChatAssistant();
       });
+    } else {
+      console.error('🚨 Header chat button not found!');
     }
 
     // Send message
@@ -3355,11 +3362,19 @@ ${this.data.goals
   }
 
   private openChatAssistant(): void {
+    console.log('🤖 openChatAssistant called');
     const container = document.getElementById('ai-chat-container');
     const chatBody = document.getElementById('ai-chat-body');
     const floatBtn = document.getElementById('ai-chat-float-btn');
 
+    console.log('Container found:', !!container);
+    console.log('ChatBody found:', !!chatBody);
+    console.log('FloatBtn found:', !!floatBtn);
+
     if (container) {
+      console.log('Container current display:', container.style.display);
+      console.log('Container classes before:', container.className);
+      
       // Mostrar el contenedor si está oculto
       container.style.display = 'block';
       
@@ -3369,9 +3384,12 @@ ${this.data.goals
       // Añadir animación de apertura
       container.classList.add('chat-opening');
       
+      console.log('Container classes after:', container.className);
+      
       // Remover la clase de animación después de que termine
       setTimeout(() => {
         container.classList.remove('chat-opening');
+        console.log('Animation complete, final classes:', container.className);
       }, 300);
 
       this.aiAssistant.isMinimized = false;
@@ -3475,6 +3493,78 @@ ${this.data.goals
     if (notification) {
       notification.classList.remove('show');
       localStorage.setItem('chat-notification-seen', 'true');
+    }
+  }
+
+  // Handle click outside and swipe to close chat
+  private handleChatOutsideInteractions(): void {
+    const container = document.getElementById('ai-chat-container');
+    if (!container) return;
+
+    // Close chat on click outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const isClickInsideChat = container.contains(target);
+      const isHeaderButton = target.closest('#ai-chat-float-toggle');
+      const isFloatButton = target.closest('#ai-chat-float-btn');
+      
+      // Only close if chat is open, click is outside, and not on control buttons
+      if (!container.classList.contains('closed') && 
+          !container.classList.contains('minimized') &&
+          !isClickInsideChat && 
+          !isHeaderButton && 
+          !isFloatButton) {
+        this.closeChatAssistant();
+      }
+    });
+
+    // Close chat on swipe (touch events)
+    let startY = 0;
+    let startX = 0;
+    const minSwipeDistance = 50;
+
+    document.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!e.changedTouches[0]) return;
+      
+      const endY = e.changedTouches[0].clientY;
+      const endX = e.changedTouches[0].clientX;
+      const deltaY = endY - startY;
+      const deltaX = endX - startX;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      
+      // Check if it's a swipe (minimum distance) and chat is open
+      if (distance > minSwipeDistance && 
+          !container.classList.contains('closed') && 
+          !container.classList.contains('minimized')) {
+        
+        // Check if swipe started outside the chat container
+        const startElement = document.elementFromPoint(startX, startY);
+        if (startElement && !container.contains(startElement)) {
+          this.closeChatAssistant();
+        }
+      }
+    }, { passive: true });
+  }
+
+  private closeChatAssistant(): void {
+    const container = document.getElementById('ai-chat-container');
+
+    if (container && !container.classList.contains('closed')) {
+      // Add closing animation
+      container.classList.add('chat-closing');
+
+      // After animation, hide completely and show float button
+      setTimeout(() => {
+        container.style.display = 'none';
+        container.classList.remove('chat-closing');
+        container.classList.add('closed');
+        this.updateFloatButton();
+      }, 300);
     }
   }
 }
