@@ -850,6 +850,100 @@
       </div>
     </div>
 
+    <!-- AI Assistant Chat -->
+    <div class="ai-chat-container" id="ai-chat-container">
+      <div class="ai-chat-header">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-info">
+          <h3>Asistente Financiero IA</h3>
+          <p>Tu consultor personal inteligente</p>
+        </div>
+        <button class="ai-chat-toggle" id="ai-chat-toggle">
+          <span class="toggle-icon">💬</span>
+        </button>
+      </div>
+      
+      <div class="ai-chat-body" id="ai-chat-body">
+        <div class="ai-messages" id="ai-messages">
+          <div class="ai-message ai-message-assistant">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+              <p>¡Hola! Soy tu asistente financiero inteligente. Puedo ayudarte a:</p>
+              <ul>
+                <li>📊 Analizar tus gastos e ingresos</li>
+                <li>💡 Darte recomendaciones personalizadas</li>
+                <li>🎯 Optimizar tu presupuesto</li>
+                <li>📈 Planificar tus metas financieras</li>
+              </ul>
+              <p>¿En qué puedo ayudarte hoy?</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="ai-quick-actions">
+          <button class="quick-action-btn" data-action="analyze">
+            📊 Analizar mis finanzas
+          </button>
+          <button class="quick-action-btn" data-action="recommendations">
+            💡 Dame recomendaciones
+          </button>
+          <button class="quick-action-btn" data-action="budget">
+            💰 Optimizar presupuesto
+          </button>
+        </div>
+        
+        <div class="ai-input-container">
+          <input 
+            type="text" 
+            id="ai-input" 
+            placeholder="Escribe tu pregunta sobre finanzas..."
+            maxlength="500"
+          />
+          <button id="ai-send-btn" class="ai-send-btn">
+            <span class="send-icon">➤</span>
+          </button>
+        </div>
+        
+        <div class="ai-typing-indicator" id="ai-typing-indicator">
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="typing-text">El asistente está escribiendo...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Key Configuration Modal -->
+    <div class="api-config-modal" id="api-config-modal">
+      <div class="config-content">
+        <h3>🔑 Configuración de OpenAI</h3>
+        <p>Para usar el asistente IA, necesitas una API Key de OpenAI:</p>
+        <div class="form-group">
+          <label for="openai-api-key">API Key de OpenAI:</label>
+          <input 
+            type="password" 
+            id="openai-api-key" 
+            placeholder="sk-..."
+            class="api-key-input"
+          />
+          <small class="form-help">
+            Tu API key se guarda localmente y solo se usa para las consultas.
+            <a href="https://platform.openai.com/api-keys" target="_blank">Obtener API Key</a>
+          </small>
+        </div>
+        <div class="config-actions">
+          <button id="save-api-key" class="btn btn-primary">
+            Guardar y Activar IA
+          </button>
+          <button id="close-config-modal" class="btn btn-outline">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Scripts -->
     <script type="module" src="./scripts/app.ts"></script>
   </body>
