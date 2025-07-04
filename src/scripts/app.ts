@@ -113,6 +113,12 @@ class FinancialAdvisor {
     this.initializeEmailJS();
     this.setupNumberFormatting();
     this.initializeAIAssistant();
+
+    // Función de prueba global para debug
+    (window as any).testChatButton = () => {
+      console.log('🧪 Testing chat button manually');
+      this.openChatAssistant();
+    };
   }
 
   private setupEventListeners(): void {
@@ -2969,14 +2975,16 @@ class FinancialAdvisor {
     // Float button (Messenger style)
     if (floatBtn) {
       floatBtn.addEventListener('click', () => {
-        this.openChatAssistant();
+        this.toggleChatAssistant();
       });
     }
 
     // Header float toggle
     if (floatToggle) {
-      floatToggle.addEventListener('click', () => {
-        this.openChatAssistant();
+      floatToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleChatAssistant();
       });
     }
 
@@ -3349,11 +3357,14 @@ ${this.data.goals
   private openChatAssistant(): void {
     const container = document.getElementById('ai-chat-container');
     const chatBody = document.getElementById('ai-chat-body');
-    const floatBtn = document.getElementById('chat-float-btn');
+    const floatBtn = document.getElementById('ai-chat-float-btn');
 
     if (container) {
-      // Remover clases de animación anteriores
-      container.classList.remove('chat-minimized', 'chat-closing');
+      // Mostrar el contenedor si está oculto
+      container.style.display = 'block';
+      
+      // Remover clases de estado anteriores
+      container.classList.remove('chat-minimized', 'chat-closing', 'closed');
       
       // Añadir animación de apertura
       container.classList.add('chat-opening');
