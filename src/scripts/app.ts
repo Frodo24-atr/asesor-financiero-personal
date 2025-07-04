@@ -2916,11 +2916,11 @@ class FinancialAdvisor {
   }
 
   private initializeChatState(): void {
-    // Initially minimize the chat
+    // Initially close the chat completely and show float button
     const container = document.getElementById('ai-chat-container');
     if (container) {
-      container.classList.add('minimized');
-      this.aiAssistant.isMinimized = true;
+      container.classList.add('closed');
+      container.style.display = 'none';
     }
 
     // Update float button based on screen size
@@ -3349,36 +3349,66 @@ ${this.data.goals
   private openChatAssistant(): void {
     const container = document.getElementById('ai-chat-container');
     const floatBtn = document.getElementById('ai-chat-float-btn');
+    const chatBody = document.querySelector('.ai-chat-body') as HTMLElement;
     
     if (container) {
+      // Limpiar clases de animación anteriores
+      container.classList.remove('closed', 'minimized', 'chat-closing');
       container.style.display = 'block';
-      container.classList.remove('minimized', 'closed');
+      
+      // Añadir animación de apertura
+      container.classList.add('chat-opening');
+      
+      // Remover la clase de animación después de que termine
+      setTimeout(() => {
+        container.classList.remove('chat-opening');
+      }, 400);
+      
       this.aiAssistant.isMinimized = false;
     }
     
-    if (floatBtn) {
-      floatBtn.classList.remove('show');
+    // Animar el body del chat
+    if (chatBody) {
+      chatBody.classList.add('expanding');
+      setTimeout(() => {
+        chatBody.classList.remove('expanding');
+      }, 300);
+    }
+    
+    // Ocultar botón flotante con animación
+    if (floatBtn && floatBtn.classList.contains('show')) {
+      floatBtn.classList.add('hide');
+      setTimeout(() => {
+        floatBtn.classList.remove('show', 'hide');
+      }, 300);
     }
     
     this.hideChatNotification();
+    this.updateFloatButton();
   }
 
   private toggleChatAssistant(): void {
     const container = document.getElementById('ai-chat-container');
-    const toggleIcon = document.querySelector('.toggle-icon') as HTMLElement;
     
-    if (!container || !toggleIcon) return;
+    if (!container) return;
     
     const isMinimized = container.classList.contains('minimized');
+    const isClosed = container.classList.contains('closed') || container.style.display === 'none';
     
-    if (isMinimized) {
-      // Si está minimizado, abrir completamente
+    if (isClosed || isMinimized) {
+      // Si está cerrado o minimizado, abrir completamente
       this.openChatAssistant();
     } else {
-      // Si está abierto, minimizar
-      container.classList.add('minimized');
-      this.aiAssistant.isMinimized = true;
-      this.updateFloatButton();
+      // Si está abierto, cerrar completamente con animación
+      container.classList.add('chat-closing');
+      
+      // Después de la animación, ocultar completamente y mostrar botón flotante
+      setTimeout(() => {
+        container.style.display = 'none';
+        container.classList.remove('chat-closing');
+        container.classList.add('closed');
+        this.updateFloatButton();
+      }, 400);
     }
   }
 
@@ -3389,14 +3419,21 @@ ${this.data.goals
     if (!container || !floatBtn) return;
     
     const isMinimized = container.classList.contains('minimized');
-    const isClosed = container.classList.contains('closed');
+    const isClosed = container.classList.contains('closed') || container.style.display === 'none';
     const isMobile = window.innerWidth <= 768;
+    const shouldShow = isClosed || (isMobile && isMinimized);
+    const isCurrentlyShowing = floatBtn.classList.contains('show');
     
-    // Show float button when chat is minimized on mobile or when chat is closed
-    if ((isMobile && isMinimized) || isClosed) {
+    if (shouldShow && !isCurrentlyShowing) {
+      // Mostrar con animación
+      floatBtn.classList.remove('hide');
       floatBtn.classList.add('show');
-    } else {
-      floatBtn.classList.remove('show');
+    } else if (!shouldShow && isCurrentlyShowing) {
+      // Ocultar con animación
+      floatBtn.classList.add('hide');
+      setTimeout(() => {
+        floatBtn.classList.remove('show', 'hide');
+      }, 300);
     }
   }
 

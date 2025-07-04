@@ -982,6 +982,118 @@ body {
   }
 }
 
+// Keyframes para animaciones del chat
+@keyframes chatSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    max-height: 600px;
+  }
+}
+
+@keyframes chatSlideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+    max-height: 600px;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+    max-height: 0;
+  }
+}
+
+@keyframes chatSlideOut {
+  from {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px) scale(0.95);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes bodyExpand {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+    height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    height: 500px;
+  }
+}
+
+@keyframes chatMinimize {
+  from {
+    max-height: 600px;
+  }
+  to {
+    max-height: 80px;
+  }
+}
+
+@keyframes chatExpand {
+  from {
+    max-height: 80px;
+  }
+  to {
+    max-height: 600px;
+  }
+}
+
+// Animaciones para el botón flotante
+@keyframes floatButtonAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+  60% {
+    transform: scale(1.1) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes floatButtonDisappear {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+  }
+}
+
+// Animation for icon change
+@keyframes iconChange {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.8);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .header .header-content {
@@ -1851,32 +1963,54 @@ body {
   border: 1px solid var(--border-color);
   z-index: 1000;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  &.minimized {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform: translateY(0);
+  opacity: 1;
+  
+  // Animación de entrada
+  &.chat-opening {
+    animation: chatSlideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+  
+  // Animación de salida
+  &.chat-closing {
+    animation: chatSlideDown 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+  
+  &.minimized {
     max-height: 80px;
+    transition: max-height 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     
     .ai-chat-body {
-      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease-out;
+      pointer-events: none;
+      height: 0;
+      overflow: hidden;
     }
     
     .toggle-icon {
-      transform: rotate(0deg);
+      // Ocultar el contenido original (X)
+      font-size: 0;
+      color: transparent;
+      transition: all 0.3s ease;
       
-      // Cambiar el icono cuando está minimizado
+      // Mostrar la flecha hacia arriba cuando está minimizado
       &::before {
         content: "⌃";
         font-size: 1.6rem;
         font-weight: bold;
         line-height: 1;
+        color: white;
+        display: inline-block;
+        transition: all 0.3s ease;
       }
-      
-      // Ocultar el contenido original (X)
-      font-size: 0;
-      color: transparent;
     }
   }
 
   &.closed {
-    display: none;
+    animation: chatSlideOut 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
 
   // Estilo tipo Facebook Messenger para móviles
@@ -1885,17 +2019,17 @@ body {
     bottom: 80px;
     right: 15px;
     max-height: 500px;
-
+    
     &.minimized {
       display: none; // Hide completely on mobile when minimized, show float button instead
     }
   }
-
+  
   @media (max-width: 480px) {
     width: 300px;
     right: 10px;
     bottom: 70px;
-
+    
     &.minimized {
       display: none; // Hide completely on mobile when minimized
     }
@@ -1957,6 +2091,12 @@ body {
   .toggle-icon {
     transition: all 0.3s ease;
     font-weight: bold;
+    display: inline-block;
+    
+    // Animación de rotación cuando cambia
+    &.changing {
+      animation: iconChange 0.3s ease-in-out;
+    }
   }
 }
 
@@ -1964,6 +2104,14 @@ body {
   display: flex;
   flex-direction: column;
   height: 500px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  opacity: 1;
+  transform: translateY(0);
+
+  // Animación de aparición cuando se abre el chat
+  &.expanding {
+    animation: bodyExpand 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
 
   @media (max-width: 480px) {
     height: 400px;
@@ -2310,6 +2458,8 @@ body {
   font-size: 1.5rem;
   z-index: 998;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: scale(0.8) translateY(20px);
 
   &:hover {
     transform: scale(1.1);
@@ -2318,6 +2468,11 @@ body {
 
   &.show {
     display: flex;
+    animation: floatButtonAppear 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  }
+
+  &.hide {
+    animation: floatButtonDisappear 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
   }
 
   @media (max-width: 768px) {
