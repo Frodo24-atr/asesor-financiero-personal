@@ -239,10 +239,11 @@ body {
 
   .input-group {
     display: flex;
-    align-items: center;
+    align-items: stretch; // Cambiar a stretch para altura consistente
 
     input {
       border-radius: var(--radius) 0 0 var(--radius);
+      flex: 1; // Tomar el espacio disponible
     }
 
     .input-addon {
@@ -253,6 +254,10 @@ body {
       border-radius: 0 var(--radius) var(--radius) 0;
       color: var(--text-secondary);
       font-size: 0.875rem;
+      display: flex;
+      align-items: center; // Centrar contenido verticalmente
+      justify-content: center;
+      min-width: 2.5rem; // Ancho mínimo consistente
     }
   }
 }
@@ -527,21 +532,28 @@ body {
 
 .input-group {
   display: flex;
-  align-items: center;
+  align-items: stretch; // Cambiar de center a stretch
 
   .input-prefix {
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     border-right: none;
     border-radius: var(--radius) 0 0 var(--radius);
-    padding: 0.75rem;
+    padding: 0.75rem; // Mismo padding que los inputs
     color: var(--text-secondary);
     font-weight: 500;
+    display: flex;
+    align-items: center; // Centrar el símbolo verticalmente
+    justify-content: center;
+    min-width: 2.5rem; // Asegurar ancho mínimo
+    font-size: 0.875rem; // Mismo tamaño de fuente que los inputs
+    height: auto; // Permitir que se ajuste automáticamente
   }
 
   input {
     border-radius: 0 var(--radius) var(--radius) 0 !important;
     border-left: none !important;
+    flex: 1; // Tomar el espacio restante
   }
 }
 
@@ -2555,384 +2567,6 @@ body {
       gap: 1rem;
       margin-top: 1.5rem;
       justify-content: flex-end;
-    }
-  }
-}
-
-// Planning Tools Styles
-.planning-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-    min-width: 0;
-  }
-}
-
-.planning-tool-card {
-  background: var(--card-color);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--primary-light);
-  }
-
-  .tool-header {
-    padding: 1.5rem;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    color: white;
-    text-align: center;
-
-    .tool-icon {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
-
-    p {
-      margin: 0;
-      opacity: 0.9;
-      font-size: 0.9rem;
-    }
-  }
-
-  .tool-content {
-    padding: 1.5rem;
-  }
-}
-
-.planning-form {
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
-    }
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-
-    label {
-      font-weight: 500;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    input, select {
-      padding: 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      background: var(--background-color);
-      color: var(--text-primary);
-      font-size: 0.9rem;
-      transition: var(--transition);
-
-      &:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-      }
-
-      &::placeholder {
-        color: var(--text-muted);
-      }
-    }
-
-    .input-group {
-      display: flex;
-      position: relative;
-
-      .input-prefix {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-        font-weight: 500;
-        z-index: 1;
-      }
-
-      input {
-        padding-left: 2rem;
-      }
-    }
-  }
-
-  .btn {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 0.875rem 1.5rem;
-    font-weight: 500;
-    
-    &.btn-primary {
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-      border: none;
-      color: white;
-      
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-      }
-    }
-  }
-}
-
-.calculation-results {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: var(--surface-color);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-
-  .results-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    
-    .results-icon {
-      font-size: 1.5rem;
-    }
-    
-    h4 {
-      margin: 0;
-      color: var(--text-primary);
-      font-size: 1.1rem;
-    }
-  }
-
-  .results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .result-item {
-    text-align: center;
-    padding: 1rem;
-    background: var(--card-color);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-
-    .result-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .result-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      margin-bottom: 0.25rem;
-    }
-
-    .result-subtitle {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    &.highlight {
-      border-color: var(--primary-color);
-      background: rgba(37, 99, 235, 0.05);
-      
-      .result-value {
-        color: var(--primary-color);
-      }
-    }
-
-    &.warning {
-      border-color: var(--warning-color);
-      background: rgba(245, 158, 11, 0.05);
-      
-      .result-value {
-        color: var(--warning-color);
-      }
-    }
-
-    &.success {
-      border-color: var(--success-color);
-      background: rgba(34, 197, 94, 0.05);
-      
-      .result-value {
-        color: var(--success-color);
-      }
-    }
-  }
-
-  .results-chart {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: var(--card-color);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    canvas {
-      max-width: 100%;
-      max-height: 300px;
-    }
-  }
-
-  .results-breakdown {
-    margin-top: 1.5rem;
-    
-    .breakdown-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--border-light);
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .breakdown-label {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-      }
-
-      .breakdown-value {
-        font-weight: 600;
-        color: var(--text-primary);
-      }
-    }
-  }
-
-  .results-recommendations {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.05));
-    border-radius: var(--radius);
-    border-left: 4px solid var(--primary-color);
-
-    .recommendation-title {
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .recommendation-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        padding: 0.5rem 0;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
-
-        &:before {
-          content: "💡";
-          flex-shrink: 0;
-        }
-      }
-    }
-  }
-}
-
-// Planning specific animations
-.planning-tool-card {
-  .tool-content {
-    opacity: 1;
-    transition: all 0.3s ease;
-  }
-
-  &.calculating .tool-content {
-    opacity: 0.7;
-    pointer-events: none;
-  }
-
-  .calculation-results {
-    animation: resultsAppear 0.5s ease-out;
-  }
-}
-
-@keyframes resultsAppear {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Responsive improvements for planning tools
-@media (max-width: 768px) {
-  .planning-tools-grid {
-    grid-template-columns: 1fr;
-
-  }
-  
-  .planning-tool-card {
-    .tool-header {
-      padding: 1rem;
-      
-      .tool-icon {
-        font-size: 2.5rem;
-      }
-    }
-    
-    .tool-content {
-      padding: 1rem;
-    }
-  }
-  
-  .calculation-results {
-    .results-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .result-item {
-      .result-value {
-        font-size: 1.25rem;
-      }
     }
   }
 }
