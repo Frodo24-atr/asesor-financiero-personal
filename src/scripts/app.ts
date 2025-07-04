@@ -1,3 +1,6 @@
+// Chart.js imports
+import { Chart } from 'chart.js/auto';
+
 // Types and Interfaces
 interface IncomeConfig {
   type: 'quincenal' | 'mensual';
@@ -506,6 +509,11 @@ class FinancialAdvisor {
     return multipliers[frequency as keyof typeof multipliers] || 1;
   }
 
+  private getMonthlyExpenseAmount(expense: Expense): number {
+    const multiplier = this.getFrequencyMultiplier(expense.frequency);
+    return expense.amount * multiplier;
+  }
+
   private convertToMonthly(amount: number, frequency: string): number {
     return amount * this.getFrequencyMultiplier(frequency);
   }
@@ -573,6 +581,7 @@ class FinancialAdvisor {
     this.updateExpensesList();
     this.updateGoalsUI();
     this.updateAnalysisUI();
+    this.initializeCharts();
 
     // Reaplicar formateo después de actualizar el contenido
     setTimeout(() => {
@@ -1906,12 +1915,8 @@ class FinancialAdvisor {
     if (!container) return;
 
     if (categories.length === 0) {
-      container.innerHTML = `
-        <div class="no-data-message">
-          <span class="icon">📊</span>
-          <p>Configure sus gastos para ver el análisis de categorías</p>
-        </div>
-      `;
+      container.innerHTML =
+        '<div class="no-data-message"><span class="icon">📊</span><p>Configure sus gastos para ver el análisis de categorías</p></div>';
       return;
     }
 
@@ -1929,20 +1934,48 @@ class FinancialAdvisor {
       other: '📦 Otros',
     };
 
+    // Colores para cada categoría
+    const categoryColors = {
+      housing: 'linear-gradient(90deg, #ef4444, #f87171)',
+      food: 'linear-gradient(90deg, #10b981, #34d399)',
+      transport: 'linear-gradient(90deg, #3b82f6, #60a5fa)',
+      health: 'linear-gradient(90deg, #f59e0b, #fbbf24)',
+      education: 'linear-gradient(90deg, #8b5cf6, #a78bfa)',
+      entertainment: 'linear-gradient(90deg, #ec4899, #f472b6)',
+      shopping: 'linear-gradient(90deg, #06b6d4, #22d3ee)',
+      services: 'linear-gradient(90deg, #84cc16, #a3e635)',
+      savings: 'linear-gradient(90deg, #059669, #10b981)',
+      debt: 'linear-gradient(90deg, #dc2626, #ef4444)',
+      other: 'linear-gradient(90deg, #6b7280, #9ca3af)',
+    };
+
     const topCategories = categories.slice(0, 5);
+    const totalAmount = topCategories.reduce((sum, cat) => sum + cat.amount, 0);
 
     container.innerHTML = `
+      <div class="categories-summary">
+        <div class="summary-item">
+          <span class="summary-label">Total analizado:</span>
+          <span class="summary-value">${this.formatCurrency(totalAmount)}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Categorías:</span>
+          <span class="summary-value">${topCategories.length} principales</span>
+        </div>
+      </div>
       <div class="categories-list">
         ${topCategories
           .map(
-            (cat) => `
-          <div class="category-item">
+            (cat, index) => `
+          <div class="category-item" style="animation-delay: ${index * 0.1}s">
             <div class="category-info">
               <span class="category-name">${categoryNames[cat.category as keyof typeof categoryNames] || cat.category}</span>
               <span class="category-amount">${this.formatCurrency(cat.amount)}</span>
             </div>
             <div class="category-bar">
-              <div class="category-fill" style="width: ${cat.percentage}%"></div>
+              <div class="category-fill" 
+                   style="width: 0%; background: ${categoryColors[cat.category as keyof typeof categoryColors] || 'linear-gradient(90deg, var(--primary-color), var(--primary-light))'}"
+                   data-width="${cat.percentage}%"></div>
             </div>
             <div class="category-percentage">${cat.percentage.toFixed(1)}%</div>
           </div>
@@ -1951,6 +1984,15 @@ class FinancialAdvisor {
           .join('')}
       </div>
     `;
+
+    // Animar las barras después de un pequeño delay
+    setTimeout(() => {
+      const bars = container.querySelectorAll('.category-fill');
+      bars.forEach((bar) => {
+        const targetWidth = (bar as HTMLElement).dataset.width;
+        (bar as HTMLElement).style.width = targetWidth || '0%';
+      });
+    }, 100);
   }
 
   private updateProjectionChart(
@@ -2401,6 +2443,303 @@ class FinancialAdvisor {
       this.applyNumberFormattingToInputs();
     }, 50);
   }
+
+  // Visualization Functions
+  private initializeCharts(): void {
+    this.updateExpensesChart();
+    this.updateTrendChart();
+  }
+
+  private updateExpensesChart(): void {
+    const canvas = document.getElementById(
+      'expenses-chart'
+    ) as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Destroy existing chart if exists
+    if (this.expensesChart) {
+      this.expensesChart.destroy();
+    }
+
+    const expenses = this.data.expenses;
+    if (expenses.length === 0) {
+      this.showEmptyChartMessage(
+        canvas,
+        'Agregue gastos para ver la distribución'
+      );
+      return;
+    }
+
+    // Group expenses by category
+    const categoryTotals: { [key: string]: number } = {};
+    expenses.forEach((expense) => {
+      const monthlyAmount = this.getMonthlyExpenseAmount(expense);
+      categoryTotals[expense.category] =
+        (categoryTotals[expense.category] || 0) + monthlyAmount;
+    });
+
+    const categories = Object.keys(categoryTotals);
+    const amounts = Object.values(categoryTotals);
+
+    const categoryNames = {
+      housing: 'Vivienda',
+      food: 'Alimentación',
+      transport: 'Transporte',
+      health: 'Salud',
+      education: 'Educación',
+      entertainment: 'Entretenimiento',
+      shopping: 'Compras',
+      services: 'Servicios',
+      savings: 'Ahorros',
+      debt: 'Deudas',
+      other: 'Otros',
+    };
+
+    const colors = [
+      '#ef4444',
+      '#10b981',
+      '#3b82f6',
+      '#f59e0b',
+      '#8b5cf6',
+      '#ec4899',
+      '#06b6d4',
+      '#84cc16',
+      '#059669',
+      '#dc2626',
+      '#6b7280',
+    ];
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    this.expensesChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: categories.map(
+          (cat) => categoryNames[cat as keyof typeof categoryNames] || cat
+        ),
+        datasets: [
+          {
+            data: amounts,
+            backgroundColor: colors.slice(0, categories.length),
+            borderWidth: 2,
+            borderColor: '#1e293b',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#e2e8f0',
+              padding: 15,
+              usePointStyle: true,
+              font: {
+                size: 12,
+              },
+            },
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#e2e8f0',
+            bodyColor: '#e2e8f0',
+            borderColor: '#475569',
+            borderWidth: 1,
+            callbacks: {
+              label: (context) => {
+                const value = context.parsed;
+                const total = amounts.reduce((sum, amount) => sum + amount, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${context.label}: ${this.formatCurrency(value)} (${percentage}%)`;
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  private updateTrendChart(): void {
+    const canvas = document.getElementById('trend-chart') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Destroy existing chart if exists
+    if (this.trendChart) {
+      this.trendChart.destroy();
+    }
+
+    const monthlyData = this.generateMonthlyTrendData();
+
+    if (monthlyData.length === 0) {
+      this.showEmptyChartMessage(
+        canvas,
+        'Configure ingresos y gastos para ver la tendencia'
+      );
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    this.trendChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: monthlyData.map((data) => data.month),
+        datasets: [
+          {
+            label: 'Ingresos',
+            data: monthlyData.map((data) => data.income),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: 'Gastos',
+            data: monthlyData.map((data) => data.expenses),
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: 'Balance',
+            data: monthlyData.map((data) => data.balance),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 3,
+            fill: false,
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              color: '#e2e8f0',
+              padding: 20,
+              usePointStyle: true,
+              font: {
+                size: 12,
+              },
+            },
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#e2e8f0',
+            bodyColor: '#e2e8f0',
+            borderColor: '#475569',
+            borderWidth: 1,
+            callbacks: {
+              label: (context) => {
+                return `${context.dataset.label}: ${this.formatCurrency(context.parsed.y)}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+            },
+            ticks: {
+              color: '#94a3b8',
+            },
+          },
+          y: {
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)',
+            },
+            ticks: {
+              color: '#94a3b8',
+              callback: function (value) {
+                return new Intl.NumberFormat('es-AR', {
+                  style: 'currency',
+                  currency: 'ARS',
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                }).format(value as number);
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  private generateMonthlyTrendData() {
+    const monthlyIncome = this.calculateMonthlyIncome();
+    const monthlyExpenses = this.calculateMonthlyExpenses();
+
+    if (monthlyIncome === 0 && monthlyExpenses === 0) {
+      return [];
+    }
+
+    const months = [];
+    const currentDate = new Date();
+
+    // Generate data for the last 6 months and next 6 months
+    for (let i = -6; i <= 6; i++) {
+      const date = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + i,
+        1
+      );
+      const monthName = date.toLocaleDateString('es-AR', {
+        month: 'short',
+        year: '2-digit',
+      });
+
+      // Add some realistic variation to simulate trends
+      const incomeVariation = 1 + (Math.random() - 0.5) * 0.1; // ±5% variation
+      const expenseVariation = 1 + (Math.random() - 0.5) * 0.15; // ±7.5% variation
+
+      const income = monthlyIncome * incomeVariation;
+      const expenses = monthlyExpenses * expenseVariation;
+      const balance = income - expenses;
+
+      months.push({
+        month: monthName,
+        income: Math.round(income),
+        expenses: Math.round(expenses),
+        balance: Math.round(balance),
+      });
+    }
+
+    return months;
+  }
+
+  private showEmptyChartMessage(
+    canvas: HTMLCanvasElement,
+    message: string
+  ): void {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '16px system-ui';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+  }
+
+  // Chart instances
+  private expensesChart: Chart | null = null;
+  private trendChart: Chart | null = null;
 }
 
 // Initialize the application when DOM is loaded
