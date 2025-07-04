@@ -152,6 +152,7 @@
           <button class="nav-tab" data-tab="expenses">💸 Gastos</button>
           <button class="nav-tab" data-tab="analysis">📈 Análisis</button>
           <button class="nav-tab" data-tab="goals">🎯 Metas</button>
+          <button class="nav-tab" data-tab="planning">🧮 Planificación</button>
         </div>
       </div>
     </nav>
@@ -792,6 +793,235 @@
                 <div class="summary-info">
                   <h4>Progreso Total</h4>
                   <div class="summary-value" id="total-progress">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Planning Tab -->
+        <section id="planning-tab" class="tab-content">
+          <div class="section-header">
+            <h2>🧮 Herramientas de Planificación</h2>
+            <p>Calculadoras avanzadas para planificar tu futuro financiero</p>
+          </div>
+
+          <!-- Planning Tools Grid -->
+          <div class="planning-tools-grid">
+            <!-- Retirement Calculator -->
+            <div class="planning-tool-card" id="retirement-calculator">
+              <div class="tool-header">
+                <div class="tool-icon">🏖️</div>
+                <h3>Calculadora de Jubilación</h3>
+                <p>Planifica tu retiro y calcula cuánto necesitas ahorrar</p>
+              </div>
+              <div class="tool-content" id="retirement-content">
+                <form class="planning-form" id="retirement-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="current-age">Edad Actual</label>
+                      <input type="number" id="current-age" min="18" max="80" value="30" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="retirement-age">Edad de Jubilación</label>
+                      <input type="number" id="retirement-age" min="50" max="80" value="65" required>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="current-savings">Ahorros Actuales</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="current-savings" data-format="currency" min="0" step="1000" placeholder="500.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="monthly-savings">Ahorro Mensual</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="monthly-savings" data-format="currency" min="0" step="1000" placeholder="100.000">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="desired-income">Ingreso Deseado en Jubilación</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="desired-income" data-format="currency" min="0" step="1000" placeholder="1.500.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="inflation-rate">Tasa de Inflación (%)</label>
+                      <input type="number" id="inflation-rate" min="0" max="20" step="0.1" value="3.5">
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">🔍 Calcular Jubilación</button>
+                </form>
+                <div class="calculation-results" id="retirement-results" style="display: none;">
+                  <!-- Results will be populated here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Investment Simulator -->
+            <div class="planning-tool-card" id="investment-simulator">
+              <div class="tool-header">
+                <div class="tool-icon">📈</div>
+                <h3>Simulador de Inversiones</h3>
+                <p>Simula el crecimiento de tus inversiones a largo plazo</p>
+              </div>
+              <div class="tool-content" id="investment-content">
+                <form class="planning-form" id="investment-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="initial-investment">Inversión Inicial</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="initial-investment" data-format="currency" min="0" step="1000" placeholder="1.000.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="monthly-investment">Aporte Mensual</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="monthly-investment" data-format="currency" min="0" step="1000" placeholder="50.000">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="investment-years">Años de Inversión</label>
+                      <input type="number" id="investment-years" min="1" max="50" value="10">
+                    </div>
+                    <div class="form-group">
+                      <label for="annual-return">Rendimiento Anual (%)</label>
+                      <input type="number" id="annual-return" min="0" max="50" step="0.1" value="8.5">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="investment-type">Tipo de Inversión</label>
+                    <select id="investment-type">
+                      <option value="conservative">Conservadora (3-6%)</option>
+                      <option value="moderate" selected>Moderada (6-10%)</option>
+                      <option value="aggressive">Agresiva (10-15%)</option>
+                      <option value="custom">Personalizada</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">📊 Simular Inversión</button>
+                </form>
+                <div class="calculation-results" id="investment-results" style="display: none;">
+                  <!-- Results will be populated here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Vacation Planner -->
+            <div class="planning-tool-card" id="vacation-planner">
+              <div class="tool-header">
+                <div class="tool-icon">✈️</div>
+                <h3>Planificador de Vacaciones</h3>
+                <p>Calcula cuánto necesitas ahorrar para tus vacaciones soñadas</p>
+              </div>
+              <div class="tool-content" id="vacation-content">
+                <form class="planning-form" id="vacation-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="vacation-cost">Costo Total de Vacaciones</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="vacation-cost" data-format="currency" min="0" step="1000" placeholder="2.000.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="vacation-date">Fecha de Viaje</label>
+                      <input type="date" id="vacation-date" required>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="current-vacation-savings">Ahorros Actuales</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="current-vacation-savings" data-format="currency" min="0" step="1000" placeholder="200.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="vacation-destination">Destino</label>
+                      <select id="vacation-destination">
+                        <option value="nacional">Nacional</option>
+                        <option value="regional">Regional (Sudamérica)</option>
+                        <option value="internacional">Internacional</option>
+                        <option value="custom">Personalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">🗓️ Planificar Vacaciones</button>
+                </form>
+                <div class="calculation-results" id="vacation-results" style="display: none;">
+                  <!-- Results will be populated here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Loan Calculator -->
+            <div class="planning-tool-card" id="loan-calculator">
+              <div class="tool-header">
+                <div class="tool-icon">🏠</div>
+                <h3>Calculadora de Préstamos</h3>
+                <p>Calcula cuotas de préstamos personales, hipotecas y más</p>
+              </div>
+              <div class="tool-content" id="loan-content">
+                <form class="planning-form" id="loan-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="loan-amount">Monto del Préstamo</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="loan-amount" data-format="currency" min="0" step="1000" placeholder="5.000.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="loan-term">Plazo (años)</label>
+                      <input type="number" id="loan-term" min="1" max="50" value="20">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="interest-rate">Tasa de Interés Anual (%)</label>
+                      <input type="number" id="interest-rate" min="0" max="100" step="0.1" value="25.5">
+                    </div>
+                    <div class="form-group">
+                      <label for="loan-type">Tipo de Préstamo</label>
+                      <select id="loan-type">
+                        <option value="personal">Personal</option>
+                        <option value="mortgage">Hipotecario</option>
+                        <option value="auto">Automotor</option>
+                        <option value="business">Comercial</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="down-payment">Anticipo/Entrada</label>
+                      <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="down-payment" data-format="currency" min="0" step="1000" placeholder="500.000">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="payment-frequency">Frecuencia de Pago</label>
+                      <select id="payment-frequency">
+                        <option value="monthly">Mensual</option>
+                        <option value="biweekly">Quincenal</option>
+                        <option value="weekly">Semanal</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-primary">💰 Calcular Préstamo</button>
+                </form>
+                <div class="calculation-results" id="loan-results" style="display: none;">
+                  <!-- Results will be populated here -->
                 </div>
               </div>
             </div>

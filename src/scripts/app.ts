@@ -3348,21 +3348,20 @@ ${this.data.goals
 
   private openChatAssistant(): void {
     const container = document.getElementById('ai-chat-container');
-    const floatBtn = document.getElementById('ai-chat-float-btn');
-    const chatBody = document.querySelector('.ai-chat-body') as HTMLElement;
+    const chatBody = document.getElementById('ai-chat-body');
+    const floatBtn = document.getElementById('chat-float-btn');
 
     if (container) {
-      // Limpiar clases de animación anteriores
-      container.classList.remove('closed', 'minimized', 'chat-closing');
-      container.style.display = 'block';
-
+      // Remover clases de animación anteriores
+      container.classList.remove('chat-minimized', 'chat-closing');
+      
       // Añadir animación de apertura
       container.classList.add('chat-opening');
-
+      
       // Remover la clase de animación después de que termine
       setTimeout(() => {
         container.classList.remove('chat-opening');
-      }, 400);
+      }, 300);
 
       this.aiAssistant.isMinimized = false;
     }
