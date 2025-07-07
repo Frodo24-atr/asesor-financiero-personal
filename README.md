@@ -274,3 +274,64 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 ---
 
 ⭐ **¡Si te gusta este proyecto, no olvides darle una estrella!** ⭐
+
+## 🚀 Despliegue
+
+### GitHub Pages
+
+Este proyecto se despliega automáticamente en GitHub Pages a través de GitHub Actions.
+
+#### Configuración Automática
+
+El proyecto incluye un workflow de GitHub Actions (`.github/workflows/deploy.yml`) que:
+
+1. **Instala dependencias** con `npm ci`
+2. **Verifica tipos** con TypeScript (`npm run type-check`)
+3. **Ejecuta linting** con ESLint (`npm run lint`)
+4. **Construye para producción** con Vite (`npm run build`)
+5. **Despliega a GitHub Pages** automáticamente
+
+#### Base Path Automática
+
+La configuración de Vite (`vite.config.ts`) detecta automáticamente el entorno:
+- **Desarrollo**: Base path relativa (`./`)
+- **Producción**: Base path con nombre del repositorio (`/asesor-financiero-personal/`)
+
+### Despliegue Manual
+
+Para desplegar manualmente o en otras plataformas:
+
+```bash
+# Construir para producción
+npm run build
+
+# Los archivos estáticos estarán en ./dist/
+```
+
+### Problemas Comunes y Soluciones
+
+#### ✅ Build Falló: TypeScript + Vite
+
+**Problema**: `tsc && vite build` fallaba porque TypeScript tenía `"noEmit": true`
+
+**Solución**:
+- Cambiado a `vite build` (Vite maneja TypeScript internamente)
+- Agregado `npm run type-check` para verificación de tipos separada
+
+#### ✅ ESLint Errores con Nueva Configuración
+
+**Problema**: ESLint v9 no soporta `--ext` y requiere configuración diferente
+
+**Solución**:
+- Migrado a `eslint.config.js` (nueva configuración plana)
+- Agregado `globals` para tipos del DOM y browser
+- Configurado ignorar archivos innecesarios (`public/`, `*.min.js`)
+
+#### ✅ Configuración de GitHub Pages
+
+**Problema**: Rutas de assets rotas en GitHub Pages
+
+**Solución**:
+- Base path dinámica basada en el entorno
+- Configuración automática del nombre del repositorio
+- Workflow optimizado para GitHub Pages

@@ -885,7 +885,7 @@ class FinancialAdvisor {
     if (!value) return '';
 
     // Remover caracteres no numéricos excepto comas y puntos
-    let cleanValue = value.replace(/[^\d,\.]/g, '');
+    let cleanValue = value.replace(/[^\d,.]/g, '');
 
     // Evitar múltiples comas
     const commaCount = (cleanValue.match(/,/g) || []).length;
@@ -991,7 +991,7 @@ class FinancialAdvisor {
       // Permitir solo caracteres numéricos, puntos, comas y espacios
       inputElement.addEventListener('keypress', (e) => {
         const char = String.fromCharCode(e.which);
-        if (!/[0-9\.,\s]/.test(char)) {
+        if (!/[0-9.,\s]/.test(char)) {
           e.preventDefault();
         }
       });

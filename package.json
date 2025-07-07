@@ -7,14 +7,15 @@
   "scripts": {
     "dev": "vite",
     "dev:host": "vite --host",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "serve": "npm run build && npm run preview",
-    "lint": "eslint . --ext ts,js --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,js --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run format:check && npm run lint",
+    "type-check": "tsc --noEmit",
     "start": "npm run dev"
   },
   "keywords": [
@@ -38,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.0",
+    "globals": "^16.3.0",
     "prettier": "^3.3.0",
     "sass": "^1.80.0",
     "typescript": "^5.6.0",
