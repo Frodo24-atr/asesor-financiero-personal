@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(({ command, mode }) => {
   const base = mode === 'production' ? '/asesor-financiero-personal/' : './';
-  
+
   return {
     root: 'src',
     base,

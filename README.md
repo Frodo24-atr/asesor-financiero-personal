@@ -294,6 +294,7 @@ El proyecto incluye un workflow de GitHub Actions (`.github/workflows/deploy.yml
 #### Base Path Automática
 
 La configuración de Vite (`vite.config.ts`) detecta automáticamente el entorno:
+
 - **Desarrollo**: Base path relativa (`./`)
 - **Producción**: Base path con nombre del repositorio (`/asesor-financiero-personal/`)
 
@@ -315,6 +316,7 @@ npm run build
 **Problema**: `tsc && vite build` fallaba porque TypeScript tenía `"noEmit": true`
 
 **Solución**:
+
 - Cambiado a `vite build` (Vite maneja TypeScript internamente)
 - Agregado `npm run type-check` para verificación de tipos separada
 
@@ -323,6 +325,7 @@ npm run build
 **Problema**: ESLint v9 no soporta `--ext` y requiere configuración diferente
 
 **Solución**:
+
 - Migrado a `eslint.config.js` (nueva configuración plana)
 - Agregado `globals` para tipos del DOM y browser
 - Configurado ignorar archivos innecesarios (`public/`, `*.min.js`)
@@ -332,6 +335,7 @@ npm run build
 **Problema**: Rutas de assets rotas en GitHub Pages
 
 **Solución**:
+
 - Base path dinámica basada en el entorno
 - Configuración automática del nombre del repositorio
 - Workflow optimizado para GitHub Pages

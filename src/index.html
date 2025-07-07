@@ -820,11 +820,25 @@
                   <div class="form-row">
                     <div class="form-group">
                       <label for="current-age">Edad Actual</label>
-                      <input type="number" id="current-age" min="18" max="80" value="30" required>
+                      <input
+                        type="number"
+                        id="current-age"
+                        min="18"
+                        max="80"
+                        value="30"
+                        required
+                      />
                     </div>
                     <div class="form-group">
                       <label for="retirement-age">Edad de Jubilación</label>
-                      <input type="number" id="retirement-age" min="50" max="80" value="65" required>
+                      <input
+                        type="number"
+                        id="retirement-age"
+                        min="50"
+                        max="80"
+                        value="65"
+                        required
+                      />
                     </div>
                   </div>
                   <div class="form-row">
@@ -832,33 +846,69 @@
                       <label for="current-savings">Ahorros Actuales</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="current-savings" data-format="currency" min="0" step="1000" placeholder="500.000">
+                        <input
+                          type="number"
+                          id="current-savings"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="500.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="monthly-savings">Ahorro Mensual</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="monthly-savings" data-format="currency" min="0" step="1000" placeholder="100.000">
+                        <input
+                          type="number"
+                          id="monthly-savings"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="100.000"
+                        />
                       </div>
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="desired-income">Ingreso Deseado en Jubilación</label>
+                      <label for="desired-income"
+                        >Ingreso Deseado en Jubilación</label
+                      >
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="desired-income" data-format="currency" min="0" step="1000" placeholder="1.500.000">
+                        <input
+                          type="number"
+                          id="desired-income"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="1.500.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="inflation-rate">Tasa de Inflación (%)</label>
-                      <input type="number" id="inflation-rate" min="0" max="20" step="0.1" value="3.5">
+                      <input
+                        type="number"
+                        id="inflation-rate"
+                        min="0"
+                        max="20"
+                        step="0.1"
+                        value="3.5"
+                      />
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary">🔍 Calcular Jubilación</button>
+                  <button type="submit" class="btn btn-primary">
+                    🔍 Calcular Jubilación
+                  </button>
                 </form>
-                <div class="calculation-results" id="retirement-results" style="display: none;">
+                <div
+                  class="calculation-results"
+                  id="retirement-results"
+                  style="display: none"
+                >
                   <!-- Results will be populated here -->
                 </div>
               </div>
@@ -878,39 +928,74 @@
                       <label for="initial-investment">Inversión Inicial</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="initial-investment" data-format="currency" min="0" step="1000" placeholder="1.000.000">
+                        <input
+                          type="number"
+                          id="initial-investment"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="1.000.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="monthly-investment">Aporte Mensual</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="monthly-investment" data-format="currency" min="0" step="1000" placeholder="50.000">
+                        <input
+                          type="number"
+                          id="monthly-investment"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="50.000"
+                        />
                       </div>
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group">
                       <label for="investment-years">Años de Inversión</label>
-                      <input type="number" id="investment-years" min="1" max="50" value="10">
+                      <input
+                        type="number"
+                        id="investment-years"
+                        min="1"
+                        max="50"
+                        value="10"
+                      />
                     </div>
                     <div class="form-group">
                       <label for="annual-return">Rendimiento Anual (%)</label>
-                      <input type="number" id="annual-return" min="0" max="50" step="0.1" value="8.5">
+                      <input
+                        type="number"
+                        id="annual-return"
+                        min="0"
+                        max="50"
+                        step="0.1"
+                        value="8.5"
+                      />
                     </div>
                   </div>
                   <div class="form-group">
                     <label for="investment-type">Tipo de Inversión</label>
                     <select id="investment-type">
                       <option value="conservative">Conservadora (3-6%)</option>
-                      <option value="moderate" selected>Moderada (6-10%)</option>
+                      <option value="moderate" selected>
+                        Moderada (6-10%)
+                      </option>
                       <option value="aggressive">Agresiva (10-15%)</option>
                       <option value="custom">Personalizada</option>
                     </select>
                   </div>
-                  <button type="submit" class="btn btn-primary">📊 Simular Inversión</button>
+                  <button type="submit" class="btn btn-primary">
+                    📊 Simular Inversión
+                  </button>
                 </form>
-                <div class="calculation-results" id="investment-results" style="display: none;">
+                <div
+                  class="calculation-results"
+                  id="investment-results"
+                  style="display: none"
+                >
                   <!-- Results will be populated here -->
                 </div>
               </div>
@@ -921,29 +1006,49 @@
               <div class="tool-header">
                 <div class="tool-icon">✈️</div>
                 <h3>Planificador de Vacaciones</h3>
-                <p>Calcula cuánto necesitas ahorrar para tus vacaciones soñadas</p>
+                <p>
+                  Calcula cuánto necesitas ahorrar para tus vacaciones soñadas
+                </p>
               </div>
               <div class="tool-content" id="vacation-content">
                 <form class="planning-form" id="vacation-form">
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="vacation-cost">Costo Total de Vacaciones</label>
+                      <label for="vacation-cost"
+                        >Costo Total de Vacaciones</label
+                      >
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="vacation-cost" data-format="currency" min="0" step="1000" placeholder="2.000.000">
+                        <input
+                          type="number"
+                          id="vacation-cost"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="2.000.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="vacation-date">Fecha de Viaje</label>
-                      <input type="date" id="vacation-date" required>
+                      <input type="date" id="vacation-date" required />
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="current-vacation-savings">Ahorros Actuales</label>
+                      <label for="current-vacation-savings"
+                        >Ahorros Actuales</label
+                      >
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="current-vacation-savings" data-format="currency" min="0" step="1000" placeholder="200.000">
+                        <input
+                          type="number"
+                          id="current-vacation-savings"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="200.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
@@ -956,9 +1061,15 @@
                       </select>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary">🗓️ Planificar Vacaciones</button>
+                  <button type="submit" class="btn btn-primary">
+                    🗓️ Planificar Vacaciones
+                  </button>
                 </form>
-                <div class="calculation-results" id="vacation-results" style="display: none;">
+                <div
+                  class="calculation-results"
+                  id="vacation-results"
+                  style="display: none"
+                >
                   <!-- Results will be populated here -->
                 </div>
               </div>
@@ -978,18 +1089,40 @@
                       <label for="loan-amount">Monto del Préstamo</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="loan-amount" data-format="currency" min="0" step="1000" placeholder="5.000.000">
+                        <input
+                          type="number"
+                          id="loan-amount"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="5.000.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
                       <label for="loan-term">Plazo (años)</label>
-                      <input type="number" id="loan-term" min="1" max="50" value="20">
+                      <input
+                        type="number"
+                        id="loan-term"
+                        min="1"
+                        max="50"
+                        value="20"
+                      />
                     </div>
                   </div>
                   <div class="form-row">
                     <div class="form-group">
-                      <label for="interest-rate">Tasa de Interés Anual (%)</label>
-                      <input type="number" id="interest-rate" min="0" max="100" step="0.1" value="25.5">
+                      <label for="interest-rate"
+                        >Tasa de Interés Anual (%)</label
+                      >
+                      <input
+                        type="number"
+                        id="interest-rate"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value="25.5"
+                      />
                     </div>
                     <div class="form-group">
                       <label for="loan-type">Tipo de Préstamo</label>
@@ -1006,7 +1139,14 @@
                       <label for="down-payment">Anticipo/Entrada</label>
                       <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="down-payment" data-format="currency" min="0" step="1000" placeholder="500.000">
+                        <input
+                          type="number"
+                          id="down-payment"
+                          data-format="currency"
+                          min="0"
+                          step="1000"
+                          placeholder="500.000"
+                        />
                       </div>
                     </div>
                     <div class="form-group">
@@ -1018,9 +1158,15 @@
                       </select>
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-primary">💰 Calcular Préstamo</button>
+                  <button type="submit" class="btn btn-primary">
+                    💰 Calcular Préstamo
+                  </button>
                 </form>
-                <div class="calculation-results" id="loan-results" style="display: none;">
+                <div
+                  class="calculation-results"
+                  id="loan-results"
+                  style="display: none"
+                >
                   <!-- Results will be populated here -->
                 </div>
               </div>

@@ -10,7 +10,7 @@ export default [
       'node_modules/',
       'public/**/*',
       '*.min.js',
-      'vite.config.ts'
+      'vite.config.ts',
     ],
   },
   js.configs.recommended,
