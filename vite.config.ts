@@ -1,11 +1,9 @@
 import { defineConfig } from 'vite';
 
-export default defineConfig(({ mode }) => {
-  const base = mode === 'production' ? '/asesor-financiero-personal/' : './';
-
+export default defineConfig(() => {
   return {
     root: 'src',
-    base,
+    base: '/asesor-financiero-personal/',
     build: {
       outDir: '../dist',
       emptyOutDir: true,
