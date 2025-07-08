@@ -1,4 +1,4 @@
-name: Simple GitHub Pages Deploy
+name: Basic Debug Deploy
 
 on:
   push:
@@ -11,34 +11,66 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  debug:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Debug Environment
+        run: |
+          echo "=== System Info ==="
+          uname -a
+          echo "=== Node.js Info ==="
+          which node || echo "Node.js not found"
+          node --version || echo "Node.js version check failed"
+          echo "=== NPM Info ==="
+          which npm || echo "NPM not found"
+          npm --version || echo "NPM version check failed"
+          echo "=== Working Directory ==="
+          pwd
+          ls -la
+          echo "=== Package.json Check ==="
+          cat package.json | head -20
+          echo "=== Source Directory ==="
+          ls -la src/ || echo "src directory not found"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Verify Node Setup
+        run: |
+          echo "=== After Node Setup ==="
+          node --version
+          npm --version
+          which node
+          which npm
 
-      - name: Build
-        run: npm run build
+      - name: Install dependencies with verbose output
+        run: |
+          echo "=== Starting npm install ==="
+          npm install --verbose
+          echo "=== Install completed ==="
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+      - name: Verify installation
+        run: |
+          echo "=== Checking node_modules ==="
+          ls -la node_modules/ | head -20
+          echo "=== Checking if vite is installed ==="
+          ls -la node_modules/.bin/ | grep vite || echo "Vite not found in .bin"
+          echo "=== Checking package-lock.json ==="
+          ls -la package-lock.json || echo "No package-lock.json"
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./dist
+      - name: Try build with full debug
+        run: |
+          echo "=== Starting build ==="
+          npm run build --verbose
+          echo "=== Build completed ==="
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+      - name: Check build output
+        run: |
+          echo "=== Build Output ==="
+          ls -la dist/ || echo "No dist directory"
+          find dist/ -type f | head -10 || echo "No files in dist"
