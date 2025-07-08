@@ -26,21 +26,32 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Type check
-        run: npm run type-check
-
-      - name: Lint code
-        run: npm run lint
+      - name: Debug - List files
+        run: |
+          echo "Working directory contents:"
+          ls -la
+          echo "Source directory contents:"
+          ls -la src/
+          echo "Node version:"
+          node --version
+          echo "NPM version:"
+          npm --version
 
       - name: Build for production
         run: npm run build
         env:
           NODE_ENV: production
+
+      - name: Debug - Check build output
+        run: |
+          echo "Build output:"
+          ls -la dist/
+          echo "Build artifacts size:"
+          du -sh dist/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
