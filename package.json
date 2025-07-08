@@ -8,6 +8,7 @@
     "dev": "vite",
     "dev:host": "vite --host",
     "build": "vite build",
+    "build:github": "vite build --mode production",
     "preview": "vite preview",
     "serve": "npm run build && npm run preview",
     "lint": "eslint .",
