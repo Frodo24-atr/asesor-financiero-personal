@@ -309,33 +309,35 @@ npm run build
 # Los archivos estáticos estarán en ./dist/
 ```
 
-### Problemas Comunes y Soluciones
+## 🚨 Estrategia de Resolución de Problemas de Despliegue
 
-#### ✅ Build Falló: TypeScript + Vite
+### Estado Actual
+Si el despliegue automático de GitHub Pages está fallando, hemos implementado múltiples estrategias:
 
-**Problema**: `tsc && vite build` fallaba porque TypeScript tenía `"noEmit": true`
+#### 🔧 Workflow Principal (deploy.yml)
+- Versión con debug activado
+- Información detallada de cada paso
+- Configuración simplificada sin caché
 
-**Solución**:
+#### 🔄 Workflow Alternativo (deploy-simple.yml)
+- Configuración minimalista
+- Versiones anteriores de las actions (más estables)
+- Menos pasos para reducir puntos de fallo
 
-- Cambiado a `vite build` (Vite maneja TypeScript internamente)
-- Agregado `npm run type-check` para verificación de tipos separada
+#### ✅ Verificación Local
+Antes de cada push, ejecuta:
+```bash
+./test-ci.sh
+```
 
-#### ✅ ESLint Errores con Nueva Configuración
+Este script simula exactamente el proceso de CI/CD.
 
-**Problema**: ESLint v9 no soporta `--ext` y requiere configuración diferente
-
-**Solución**:
-
-- Migrado a `eslint.config.js` (nueva configuración plana)
-- Agregado `globals` para tipos del DOM y browser
-- Configurado ignorar archivos innecesarios (`public/`, `*.min.js`)
-
-#### ✅ Configuración de GitHub Pages
-
-**Problema**: Rutas de assets rotas en GitHub Pages
-
-**Solución**:
-
-- Base path dinámica basada en el entorno
-- Configuración automática del nombre del repositorio
-- Workflow optimizado para GitHub Pages
+### Si el Problema Persiste
+1. Verificar que GitHub Pages esté habilitado en el repositorio
+2. Confirmar que la branch `main` esté configurada como source
+3. Revisar los logs detallados en GitHub Actions
+4. Considerar despliegue manual:
+   ```bash
+   npm run build:github
+   # Subir contenido de ./dist/ manualmente
+   ```
